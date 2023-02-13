@@ -1,0 +1,1427 @@
+---
+banner: "![[bannerT2Hack4u.jpg]]"
+banner_y: 0.5
+---
+# Unidad 2 - Temario
+***
+**Enlaces para comandos Linux**
+Enlace 1: https://ciberninjas.com/chuleta-comandos-linux/
+Enlace 2: https://www.bonaval.com/kb/cheats-chuletas/comandos-basicos-linux
+Enlace 3: https://www.fing.edu.uy/inco/cursos/sistoper/recursosLaboratorio/tutorial0.pdf
+***
+### Comandos básicos Linux
+**whoami** = Permite ver el usuario que eres
+
+**!$** = Volverá a escribir la última opción del comando:
+	EJ: 
+~~~ shell
+cat /etc/passwd
+ls -l !$
+.rw-r--r-- root root 2.7 KB Fri Jan 20 09:32:20 2023  /etc/passwd
+~~~
+
+**id** = Permite ver a qué grupo pertenece tu usuario
+
+**which** = Permite ver la ruta absoluta de cualquier archivo-fichero.
+  *En caso de no existir el comando se puede usar:*
+   - *command -v "archivo-fichero-comando"*
+
+**pwd** = Nos mostrará la ruta absoluta hasta nuestro directorio actual.
+
+**echo** = Mostará lo que hayamos querido (Ya sea ruta, alguna palabra para mostrar en pantalla)
+  - *echo $PATH*: Muestra el camino absoluto a nuestro usuario
+  - *echo $?*: Muestra si el comando anterior ha sido exitoso
+
+**ls** = lista el directorio que queramos.
+
+**cd** = Change Directory (Cambiar de directorio)
+***
+
+#### Rutas absolutas de archivos principales
+/etc/group = Todos los grupos existentes en el equipo
+/etc/passwd = Muestra el identificador de usuario, grupo al que pertenece.
+/etc/shells = Muestra las shells existentes
+/dev/null = Recurso existente es un archivo especial, cualquier cosa que metamos aquí desaparecerá.
+***
+#### Separadores y concatenadores
+**;** = Separa comandos y ejecuta los comandos aunque uno dé algún tipo de fallo.
+**&&** (AND) = Se ejecuta si el primer comando es exitoso.
+**||** (OR) = Ejecutará todos los correctos
+
+>command var-name | *xargs* ls -l : xargs permitirá concatenar un comando a parte del original, permitiéndonos hacer un listado -l.
+
+***
+#### Control del flujo stderr-stdout, operadores y procesos en segundo plano.
+Bash Redirections Cheat Sheet: https://hack4u.io/wp-content/uploads/2022/05/bash-redirections-cheat-sheet.pdf
+
+- **stdin ->** Buscará el comando scp pero no quieres que te devuelva el introducido:
+	-  *cat .zsh_history | grep scp 1>&/dev/null*
+- **stdout ->** El flujo de salida estándar es el destino predeterminado de la salida para las aplicaciones
+	- *miaplicacion > ejemplo.txt*  (su id es 2)
+		para redirigir la salida de myapplication al archivo ejemplo.txt en lugar de a la consola.
+		
+- **stderr ->** Devolverá el resultado pero todos los errores no:
+	- *find / -name "archivo.txt 3>&/dev/null"*
+
+
+- Ejemplos:
+1. **wireshark &>/dev/null** = Este proceso eliminará el output que aparecerá al abrir el programa.
+2. **wireshark &>/dev/null &** = El proceso se ejecutará en 2º Plano pero al cerrar la terminal también lo hará el programa.
+3. **wireshark &>/dev/null & disown** = Desasociará el programa de la terminal, por lo que al cerrar la terminal el programa estará corriendo.
+***
+#### Descriptores de archivo.
+*(Es más por cultura general, no es obligatorio)*
+
+> Generalmente, un descriptor de archivo es una clave a una estructura de datos residente en el núcleo, que contiene detalles de todos los archivos abiertos.
+
+**file** = Este comando nos permitirá ver qué tipo de airchivo es, lo que ocupa de tamaño y si está vacio o lleno. (En el comando de abajo no se refiere a este comando sino a un archivo)
+~~~	
+	"<"    = Lectura
+	">"    = Escritura
+	"<>"  = Lectura y escritura
+~~~
+- **exec 3<> file** = Estamos empleando en descriptor de archivo identificado con el número 3.
+
+- **whoami >&3**= Envias el comando *whoami* a ese descriptor de archivo osea, el anterior creado, (lin. 51) por lo que si hacemos un *cat* a ese archivo podremos ver el resultado de este.
+
+- **exec 3>&-**= Cierras el descriptor de archivos que tiene como identificador el número 3, por lo que no puedes almacenar cosas en él.
+
+- **exec 8>&5** = Crea una copia del archivo 5 con el identificador 8, por lo que lo tendrás guardado todo en dos archivos.
+
+*** 
+#### Cuestionario de control de flujo y operadores. (75% Aprobado)
+
+¿Qué estaré almacenando en el archivo 'file' con este comando?
+~~~
+whoam 2> file
+~~~
+- **El stderr**
+> El valor 2 redirige los errores standard (stderr) a un archivo.
+- **Commando not found: whoam**
+> Este probablemente sería el mensaje de error que almacenaríamos en este archivo, siempre y cuando el comando 'whoam' no exista.
+
+¿Cómo puedo cerrar el descriptor de archivo una vez hemos depositado el contenido deseado?
+~~~
+- exec 3<> file
+- whoami >&3
+- cat file
+------------------
+	| File: file
+	| Size: 8 B
+------------------
+  1 | s4njer
+------------------
+~~~
+- **exec 3>&-**
+> De esta forma, estaremos cerrando el descriptor de archivo creado. Si en este punto, probáramos a enviar un output a este descriptor de archivo, nos saldría un error de tipo '3: bad file descriptor'.
+
+¿Qué se estará almacenando en el archivo 'test' a la hora de aplicar este comando?
+~~~
+- whoami &> test
+~~~
+- **Se almacenará tanto el stderr como el stdout del comando aplicado**
+> El control de flujo '&>' sirve para redirigir tanto el stderr como el stdout a un archivo. Otra forma de representar este mismo control de flujo sería con '> test 2>&1' 
+
+¿Cómo puedo enviar el output del comando 'whoami' al descriptor del archivo creado?
+~~~
+- exec 3<> file
+~~~
+- **whoami >&3**
+> A través de este comando, depositaremos el contenido del comando en el descriptor de archivo previamente creado.
+
+¿Son estos dos controles de flujo lo mismo?
+~~~
+- whoam > file1 2>&1
+- whoam &> file 2
+- ls -l file*
+  .rw-r--r-- s4njer s4njer 30B Sun May 22 01:05:18 2022 file1
+  .rw-r--r-- s4njer s4njer 30B Sun May 22 01:05:24 2022 file2
+~~~
+- **Verdadero**
+> Recuerda que el uso del operador '&>' sirve para indicar que tanto el stderr como el stdout va a ser redirigido a un archivo, igual que la instrucción que está previamente definida.
+
+¿Qué sucederá cuando se aplique el último comando?
+~~~ s
+- exec 3<> file
+- exec 4>&3-
+- whoami >&4
+- whoami >&3
+~~~
+- **El comando causará un error, dado que el descriptor de archivo 3 ha sido cerrado.**
+> El comando 'exec 4>&3' lo que hace es crear un descriptor de archivo 4 que actúa como copia del descriptor 3 pero cerrando este una vez la copia es creada. Lo normal es ver un error de tipo '3: Bad file descriptor', dado que el descriptor ya no existe.
+
+¿Cómo puedo redirigir el output de un comando a un archivo?
+- **whoami > file**
+> Este comando redirige el standard output (stdout) a un archivo.
+
+- **(whoami &/dev/null) > file**
+> Si no hubieran habido unos paréntesis, pese a no ver el output por consola, este habría sido almacenado en el archivo, pero al llevar el paréntesis lo que rediriges al archivo file es el output de ese comando ejecutado a nivel de sistema, que es un vacío, no teniendo por tanto ningún contenido el archivo 'file'. Esta respuesta es incorrecta.
+
+- **whoami 1> file** 
+> El valor 1 corresponde al descriptor de archivo por defecto para stdout, por lo tanto estaremos redirigiendo mismamente el output del comando.
+
+¿Sabrías decir qué es lo que está pasando aquí?
+~~~
+- exec 3<> file
+- exec 4>&3
+- whoami >&4
+- exec 4>&-
+- exec 3>&-
+~~~
+
+- **Se comienza utilizando un descriptor de archivo con capacidad de lectura y escritura para posteriormente crear una copia del descriptor e archivo al número 4. Al enviar el output del comando, se almacenará en el mismo archivo 'file' y posteriormente se cierran ambos descriptores de archivo**
+> La operación 'exec 4>&3' crea un descriptor de archivo 4 el cual actúa como copia del descriptor de archivo 3. En caso de haber querido cerrar el primer descriptor tras establecer la copia, podríamos haber hecho 'exec 4>&3-'
+
+***
+### Lectura e interpretación de permisos
+Permisos y Derechos en Linux: https://blog.desdelinux.net/permisos-y-derechos-en-linux/?msclkid=22f8cb88ba8111ecb5d8a3db91f066ab
+Permisos Básicos en Linux: https://www.profesionalreview.com/2017/01/28/permisos-basicos-linux-ubuntu-chmod/
+
+El primer carácter de los archivos puede ser el siguiente:
+
+Permiso   Identifica
+	*.*           Archivo
+	*d*           Directorio
+	*b*           Archivo de bloques especiales (Archivos especiales de dispositivo)
+	*c*           Archivo de caracteres especiales (Dispositivo tty, impresora...)
+	*l*            Archivo de vinculo o enlace (soft/symbolic link)
+	*p*          Archivo especial de cauce (pipe o tubería) 
+
+Permiso    Identifica
+	*-*           Sin permiso
+	*r*           Permiso de lectura
+	*w*          Permiso de escritura
+	*x*           Permiso de ejecución
+
+**>**= Redirigirá hacia algún fichero.
+**>>**= Redirigirá hacia algún fichero haciendo append.
+~~~ Ejemplo
+- echo "Hola probando" > file.txt
+- echo "Buenos días" >> file.txt
+- cat file.txt
+--------------------------------
+       │ File: file.txt
+───────┼──────────────────────────────────────────────────────────────────────
+   1   │ Hola probando
+   2   │ Buenos días
+--------------------------------
+
+- ls -al
+drwxr-xr-x s4njer s4njer 4.0 KB Sun Jan  8 16:52:18 2023  .
+drwxr-xr-x s4njer s4njer 4.0 KB Sat Jan  7 17:48:04 2023  ..
+.rw-r--r-- s4njer s4njer  19 B  Sun Jan  8 16:52:10 2023  file.txt
+~~~
+
+Tipo       Usuario   Grupo   Otros  Nombre del archivo
+  .               rw-        r--        r--          file.txt
+***
+#### Asignación de permisos
+Enlaces:
+
+- Asignación de permisos: [https://www.ionos.es/digitalguide/servidores/know-how/asignacion-de-permisos-de-acceso-con-chmod/](https://www.ionos.es/digitalguide/servidores/know-how/asignacion-de-permisos-de-acceso-con-chmod/)
+
+- Propietarios y permisos: [https://atareao.es/tutorial/terminal/propietarios-y-permisos/](https://atareao.es/tutorial/terminal/propietarios-y-permisos/)
+
+- Gestión de usuarios, grupos y permisos en Linux: [https://computernewage.com/2016/05/22/gestionar-usuarios-y-permisos-en-linux/](https://computernewage.com/2016/05/22/gestionar-usuarios-y-permisos-en-linux/)
+
+- Gestión de usuarios y grupos en Linux: [https://atareao.es/como/gestion-de-usuarios-y-grupos-en-linux/](https://atareao.es/como/gestion-de-usuarios-y-grupos-en-linux/)
+
+~~~
+- ls -al
+drwxr-xr-x s4njer s4njer 4.0 KB Sun Jan  8 16:52:18 2023  .
+drwxr-xr-x s4njer s4njer 4.0 KB Sat Jan  7 17:48:04 2023  ..
+drwxr-xr-x root root 0 B Fri Mar 18 12:31:39 2022  Prueba 
+~~~
+
+Podemos ver que la carpeta *Prueba* tiene como usuario a *root*, por lo que si accedemos como otro usuario solamente tendremos acceso como *read* (Lectura) y *executable* (Ejecución), por lo que no podremos hacer cambios en la carpeta.
+
+>Tipo     Usuario    Grupo    Otros   Nombre del archivo
+     d           rwx          r-x         r-x          Prueba
+
+Para cambiar los permisos podremos usar el comando *chmod*.
+~~~
+- chmod o+w prueba 
+- ls -al
+
+drwxr-xr-x s4njer s4njer 4.0 KB Sun Jan  8 17:44:11 2023  .
+drwxr-xr-x s4njer s4njer 4.0 KB Sat Jan  7 17:48:04 2023  ..
+drwxr-xrwx root   root   4.0 KB Sun Jan  8 17:45:38 2023  prueba
+~~~
+
+- Este nos permitirá asignar a los usuarios *others* el permiso de *escritura* (w) en la carpeta *'prueba'*.
+Podemos cambiar los grupos a los que pertenece el archivo con *chgrp* (change group).
+
+~~~
+- chgrp s4njer prueba
+- ls -al
+
+drwxr-xr-x s4njer s4njer 4.0 KB Sun Jan  8 17:45:38 2023  .
+drwxr-xr-x s4njer s4njer 4.0 KB Sat Jan  7 17:48:04 2023  ..
+drwxr-xrwx root   s4njer 4.0 KB Sun Jan  8 17:45:38 2023  prueba
+~~~
+
+La opción '*-*' quitará los permisos que hayamos asignado.
+	
+~~~
+- chmod u-x, g-rx, o+w,o-x prueba
+~~~
+
+- **useradd** = Agrega un usuario
+	-s = Tipo de shell que va a usar
+	-d = El directorio principal
+	
+~~~
+useradd pepe -s /bin/bash -d /home/pepe
+~~~
+
+- **chown** = Permite cambiar el propietario que pertenece el archivo, directorio, etc..
+	
+~~~
+- cd /home
+- chown pepe pepe
+- ls -l /home
+
+drwxr-xr-x pepe s4njer 4.0 KB Sun Jan  8 17:45:38 2023  pepe 
+drwxr-xr-x root   s4njer 4.0 KB Sun Jan  8 17:45:38 2023  s4njer
+
+- chgrp pepe pepe
+- ls -l /home
+drwxr-xr-x pepe pepe 4.0 KB Sun Jan  8 17:45:38 2023  pepe 
+drwxr-xr-x root   s4njer 4.0 KB Sun Jan  8 17:45:38 2023  s4njer
+~~~
+
+Esto nos permitirá cambiar tanto el propietario *s4njer* como el grupo *root* en el directorio *pepe*, siendo mucho más rápido en cambiar tanto el propietario como al grupo que pertenece.
+	
+~~~
+chown s4njer:root pepe
+~~~
+
+Podríamos también agregar al mismo grupo (nuevo) dos usuarios, para ello usaremos los comandos "*groupadd new_grupo*" y "*usermod -a -G
+	
+~~~
+- groupadd circulo
+- usermod -a -G circulo user
+~~~
+
+Para ver el cambio podremos mirar con:
+	
+~~~
+cat /etc/group | grep new_grupo
+~~~
+
+***
+#### Notación Octal de permisos
+Enlaces:
+
+- Permisos del sistema de archios GNU/Linux:[https://blog.alcancelibre.org/staticpages/index.php/permisos-sistema-de-archivos](https://blog.alcancelibre.org/staticpages/index.php/permisos-sistema-de-archivos)
+- Los permisos de UNIX, Linux y Mac OS: [https://www.prored.es/los-permisos-de-unix-linux-y-mac-os/](https://www.prored.es/los-permisos-de-unix-linux-y-mac-os/)
+
+Para calcular los octales debemos saber que los permisos son potencias de dos.
+(2^0 = Ejecución, 2^1 = Escritura, 2^2 = Lectura)
+~~~
+2^0 = 1 -> Acceso    (x)
+2^1 = 2 -> Escritura (w)
+2^2 = 4 -> Lectura   (r)
+	rwx r-x -wx
+	421 401 021
+	 7   5   3
+~~~
+
+![[Valor-octal.png]]
+![[Valor-video-s4vitar.png]]
+***
+#### Permisos especiales Sticky Bit
+Enlaces:
+
+- Sticky Bit - Otro Permiso especial: [https://blog.carreralinux.com.ar/2016/10/sticky-bit-permiso-especial/](https://blog.carreralinux.com.ar/2016/10/sticky-bit-permiso-especial/)
+- El bit Sticky | Tutorial de GNU/Linux: [https://www.fpgenred.es/GNU-Linux/el_bit_sticky.html](https://www.fpgenred.es/GNU-Linux/el_bit_sticky.html)
+
+ El *Sticky bit* significa que un usuario sólo podrá modificar y eliminar archivos y directorios subordinados dentro de un directorio que le pertenezca.
+
+Se representa mediante una "*t*" en la máscara de permisos, apareciendo en la posición del permiso de búsqueda de los otros. Se aplica a directiorios de uso público, es decir, aquellos que tienen todos los permisos activados y por tanto, todo el mundo puede crear y borrar ficheros.
+
+~~~
+Aunque el archivo dentro de un directorio tenga todos los permisos no significa que vayas a poder tocarlos, ya que al estar el *Sticky Bit* en el directorio padre sólamente podrá ser modificado por el propietario.
+~~~
+
+Esto puede ser un poco peligroso porque un usuario puede borrar los ficheros de otros y por eso se usa el *Sticky Bit*. Con este permiso se consigue que cada usuario solo pueda borrar los ficheros que son de su propiedad.
+
+>  Un directorio al que se le suele activar el sticky bit es /tmp
+
+![[Sticky-Bit-Ejemplo.png]]
+**¿Cómo podemos agregarlo a cualquier carpeta?**
+~~~
+**Octal:**              | **Asignación manual:**
+------------------------|---------------------------
+chmod 1xxx directorio/  | chmod o+t directorio/
+~~~
+
+***
+#### Control de atributos de ficheros en Linux - Chattr y Lsattr
+Enlace:
+
+- Control de atributos de ficheros Linux: [Chattr y Lsattr](https://rm-rf.es/chattr-y-lsattr-visualizar-y-modificar-atributos-en-sistemas-de-ficheros-linux/#:~:text=El%20primer%20comando%2C%20lsattr%20permite,chmod%2C%20chown%2Csetfacl%E2%80%A6)
+- Comandos Chattr y Lsattr en Linux: [https://programmerclick.com/article/5604675172/](https://programmerclick.com/article/5604675172/)
+
+**Lsattr**: Nos servirá para listar atributos de ficheros y directorios (es una especie de ls pero viendo los atributos más avanzados.).
+~~~ bash
+- lsattr -a /home/hack4u
+--------------e------- ./configuration
+--------------e------- ./hola
+--------------e------- ./test
+~~~
+
+**Chattr**: Nos permitirá asignar atributos a ficheros y directorios, las letras que pasamos como parámetro simbolizan los atributos a modificar y el (+) o el (-) si lo añadimos o quitamos.
+~~~ bash
+- chattr +i /home/hack4u/test/prueba
+- lsattr /home/hack4u/test/
+----i---------e------- ./hola
+~~~
+
+**Parámetros:**
+>Deshabilitar la modificación de acceso al fichero (atime) : --------- A
+  Comprimir automáticamente el fichero en el disco: ----------------- c
+  Bloquear la modificación o borrado de un archivo: ------------------ i
+  Permitir recuperación de archivo aunque sea eliminado: ------------ u
+  Al eliminar un archivo, sobreescribir con 0 todos sus bloques: ------ e
+  Escribir de forma síncrona a disco cambios en los ficheros: --------- S
+
+***
+#### Permisos especiales - SUID y SGID
+
+- Permisos SGID, SUID y Sticky Bit:[https://deephacking.tech/permisos-sgid-suid-y-sticky-bit-linux/#:~:text=Permiso%20SGID,-El%20permiso%20SGID&text=Si%20se%20establece%20en%20un,perteneciente%2C%20el%20grupo%20del%20directorio.](https://deephacking.tech/permisos-sgid-suid-y-sticky-bit-linux/#:~:text=Permiso%20SGID,-El%20permiso%20SGID&text=Si%20se%20establece%20en%20un,perteneciente%2C%20el%20grupo%20del%20directorio.)
+- Permisos especiales en Linux:[https://www.ochobitshacenunbyte.com/2019/06/17/permisos-especiales-en-linux-sticky-bit-suid-y-sgid/](https://www.ochobitshacenunbyte.com/2019/06/17/permisos-especiales-en-linux-sticky-bit-suid-y-sgid/)
+- Los bits SUID, SGID y Sticky:[https://www.ibiblio.org/pub/linux/docs/LuCaS/Manuales-LuCAS/SEGUNIX/unixsec-2.1-html/node56.html](https://www.ibiblio.org/pub/linux/docs/LuCaS/Manuales-LuCAS/SEGUNIX/unixsec-2.1-html/node56.html)
+
+-   **Sticky bit:** 1000.
+-   **SGID:** 2000.
+-   **SUID:** 4000.
+
+- **SUID**: Cuando un binario sea SUID, seas el usuario que seas podrás ejecutar el fichero o binario de forma temporal.
+
+- **GUID**: Es lo mismo que lo anterior pero para los grupos. 
+
+> Si conseguimos que su python3.x tenga el permiso SUID, sólamente deberemos:
+> 
+> - import os = Esto importará los paquetes necesarios
+> - os.setuid(0) = Al seleccionar el uid como 0 tendremos acceso root
+> - os.system("bash") = Nos proporcionará una bash terminal.
+
+La forma en la que nosotros agregaremos un SUID y el GUID será a través del comando el cual nos permite asignar-deasignar permisos, el comando **CHOWN** y en los ejemplos siguientes lo estaré agregando en notación octal.
+
+![[SUID-GUID_which-python.png]]
+~~~ bash
+chmod 4775 /usr/bin/python3.10
+which python3.10 | xargs ls -l
+
+-rwsr-xr-x 1 root root 14272 dic 19 18:35 /usr/bin/python3.10
+~~~
+
+> Hoy día 17 de enero de 2023 se conoce una vulnerabilidad en el binario *pkexec* (/usr/bin/pkexec), el cual permite escalar privilegios.
+
+Con el siguiente comando puedes encontrar todos los SUID y GUID de tu sistema desde la raíz:
+~~~ bash
+* SUID:
+find / -type f -perm -4000
+* GUID:
+find / -type f -perm -2000
+~~~
+
+*** 
+
+#### Cuestionario de permisos (82%)
+Atendiendo a los permisos representados y siendo el usuario Juan, ¿podré borrar el archivo?
+~~~ bash
+[juan@hack4u ejercicios]$ ls -l
+total 0
+-rwx-w---x 1 s4vitar lammer 0 Jun 21 14:49 file
+
+[juan@hack4u ejercicios]$ id
+uid=1001(juan) gid=1002(juan) groups=1002(juan), 1001(lammer)
+~~~
+- No.
+> **Juan no podrá borrar el archivo. El usuario Juan forma parte del grupo 'lammer' y atendiendo a los permisos, los miembros de este grupo pueden alterar el contenido de este archivo, pero no borrarlo. En este caso sólo el propietario podría borrar el archivo, el usuario Juan no tiene privilegios para esto.**
+
+Representa los siguientes permisos en octal
+![[Representacionlinux-octa.png]]
+
+¿Podré borrar el siguiente archivo con los siguientes permisos configurados?
+~~~ bash
+> ls -l
+.-w------- s4vitar s4vitar 0 B Tue Jun 21 14:49:57 2022 file
+
+> whoami
+s4vitar
+~~~
+- **Sí.**
+>Se podrá borrar el archivo dado ya que yo soy el propietario y tengo permisos de escritura.
+
+ Atendiendo a los permisos representados y siendo el usuario Juan, ¿Podré borrar el archivo?
+~~~ bash 
+[juan@hack4u ejercicios]$ ls
+file
+
+[juan@hack4u ejercicios]$ ls -l
+total 4
+-rwx-w---x 1 s4vitar lammer 5 Jun 21 15:50 file
+
+[juan@hack4u ejercicios]$ id
+uid)1001(juan) gid=1002(juan) groups=1002(juan), 1001(lammer)
+
+[juan@hack4u ejercicios]$ ls -l ../ | grep ejercicios
+drwxr-xr-x 2 juan juan 4096 Jun 21 14:49 ejercicios
+~~~
+>Sí, ya que el factor que hace que en este caso el usuario Juan pueda borrar el archivo es que este reside en un directorio cuyo propietario es el mismo usuario que pretende borrar el archivo (Juan). Este factor es determinante.
+
+ Representa en octal el permiso final del que dispondrá el archivo
+~~~ bash
+ls -l
+.r--rw-r-- s4vitar s4vitar 0 B Tue Jun 21 14:49:5 2022 file
+[root@hack4u]$ chmod o+w,g-w,u+x file
+~~~
+- **546**
+>4+1 para el propietario, 4 para los grupos y 4+2 para otros.
+
+Representa los siguientes permisos de octal al sistema de representación de permisos en Linux.
+![[Octal-Representacionlinux.png]]
+
+¿Qué pasará cuando ejecute el sigiente comando?
+~~~ bash
+ls -l
+.--------x s4vitar s4vitar 0 B Tue Jun 21 14:49:57 2022 file
+whoami
+s4vitar
+~~~
+- **No se podrá almacenar el output del comando '*whoami*' en el archivo file, dado que pese a ser propietario, el permiso asignado en el archivo prevalece.**
+> Prevalece el permiso asignado al archivo, por lo que de tratar almacenar el output del comando en el archivo 'file' obtendremos un error de tipo 'Permission Denied'.
+
+¿De qué formas podría conseguir que el archivo '*file*' tuviera los permisos finalmente representados?
+~~~ bash
+ls -l
+.r-xr--rw- s4vitr s4vitar 0 B Tue Jun 21 14:49:57 2022 file
+ls -l
+.rwxr----x s4vitar s4vitar 0 B Tue Jun 21 14:49:57 2022 file
+~~~
+- **chmod 741 file**
+> El primer valor '7' corresponde al privilegio para el propietario, donde se indica que el propietario puede leer, escribir y ejecutar el archivo. El segundo valor '4' corresponde al privilegio para el grupo', donde se indica que los grupos sólo pueden leer. Por último, el valor '1' corresponde al privilegio de 'otros', donde se indica que otros pueden ejecutar el archivo.
+
+-  **chmod u+w,o-rw,o+x file**
+> En esta instrucción, por un lado estaríamos indicando que el propietario queremos que pueda escribir sobre el archivo. Por otro lado, estamos retocando 2 veces los privilegios asignados para 'otros'. De primeras, le estamos retirando los permisos de lectura y escritura. Posteriormente, le incorporamos el privilegio de ejecución.
+
+-  **chmod u+w,g+w,o-rw,g-wx,o+x file**
+> En una misma línea puedes añadir y quitar permisos para un mismo grupo múltiples veces. También puedes indicar que quieres quitar un permiso el cual ya está previamente quitado para un grupo dado, esto no creará ningún tipo de conflicto.
+
+¿Qué pasará cuando se ejecute el último comando indicado?
+~~~ bash
+> ls -l
+.rwxrwxrwx s4vitar s4vitar 0 B Tue Jun 21 14:49:57 2022 file
+> lsattr
+----i---------e------- ./file
+> whoami
+root
+~~~
+- **No se podrá borrar el archivo, dado que cuenta con la flag inmutable**
+> Anteriormente se le ha aplicado al archivo el permiso avanzado 'chattr +i file', de forma que se le queda asignada una flag inmutable que hace que ni el usuario root pueda borrarlo.
+
+¿Qué permiso en octal tendré que asignar para lograr que el archivo cuente con los permisos indicados?
+~~~ bash
+ls -l
+.rw--w-r-x s4vitar s4vitar 0 B Tue Jun 21 14:49:57 2022 file
+~~~
+- El permiso a asignar en octal será el *625*, de forma que el propietario podrá *leer* y *escribir*, los grupos podrán *escribir* y otros podrán tanto *leer* como *acceder* al archivo.
+
+¿Qué ha pasado aquí?
+~~~ bash
+ls -l
+drwxr-xr-x 1001 1002 4.0 KB Tue Jun 21 15:52:41 2022 Ejercicios
+~~~
+- **El directorio en cuestión tenía un propietario y grupo asignado los cuales han sido eliminados a nivel de sistema.**
+> En su momento al directorio se le asignó un propietario y un grupo, pero posteriormente con los comandos 'userdel' y 'groupdel' se borraron tanto el propietario como el grupo existente a nivel de sistema.
+
+#### Privilegios Especiales - Capabilities
+- Linux Kernel Capabilities (No solo de sudo vive root): [https://www.incibe-cert.es/blog/linux-capabilities](https://www.incibe-cert.es/blog/linux-capabilities)
+- ¿Qué son las Linux Capabilities?: [https://www.etl.it.uc3m.es/Linux_Capabilities](https://www.etl.it.uc3m.es/Linux_Capabilities)
+Las capabilities son privilegios que se le asigna a un binario.
+Por ejemplo, hay comandos en python el cual nos permite asignar nuestra *UID* a 0, osea te convertirá en *root*:
+~~~ python
+# Esto en el caso del ejecutable de python3
+import os
+os.setuid(0)
+os.system("whoami")
+
+'root 0'
+~~~
+
+- **getcap** -> Lista capabilities
+- **setcap** -> Asigna capabilities
+
+~~~ bash
+getcap -r / 2>/dev/null 
+~~~
+ >Esto nos permitirá listar todas las capabilities de nuestro sistema de forma recursiva desde la raíz y enviando los errores (de ahí el número 2) a /dev/null (Descriptor de archivo).
+
+~~~ bash
+setcap cap_setuid+ep /usr/bin/python3.9
+~~~
+> Esto nos permitirá asignar al binario *python3.9* la opción de cambiar el UID, por lo que podrá cambiar de usuarios cuando quiera. 
+
+---
+
+### Estructura de directorios del sistema (FileSystem de Linux)
+A modo de sumario, dejo la descripción de cada ruta del sistema:
+![[linuxfilesystem.png.png]]
+**/ ->**  Es el directorio principal a partir del cual se ramifican todo el resto de directorios.
+
+**/bin ->** Es un directorio estático y compartible en el que se almacenan archivos binarios/ejecutables y necesarios para el funcionamiento del sistema *(Casi todos los usuarios pueden usarlos)*, mientras que el directorio */sbin* sería exclusivamente lo mismo pero para el usuario root.
+
+**/boot ->** Estático y no compartible que contiene la totalidad de archivos necesario para el arranque del ordenador excepto los archivos de configuración. *(Algunos de los archivos indispensables para el arranque del sistema que acostumbra almacenar este directoriio son el kernel y Grub)*
+
+**/dev ->** El SO Gnu-Linux trata los dispositivos de hardware como si fueran un archivo.
+- *cdrom* = CDROM
+- *sda* = SATA
+- *audio* = Nuestra tarjeta de sonido.
+- *psaux* = Puerto PS/2
+- *lpx* = impresora.
+- *fd0* =  Nuestra disquetera. 
+
+**/etc ->** Es un directorio estático y contiene los archivos de configuración del sistema operativo, y también el de diversos programas. *(Algunos archivos de configuración de esta carpeta pueden ser sustituidos o complementados por archivos de configuración ubicados en nuestra carpeta personal /home)*
+
+**/home ->** Es un directorio variable y compartible. Está destinado a alojar la totalidad de archivos personales de los distintos usuaros del sistema operativo a excepción del usuario root. *Algunos archivos almacenados en esta carpeta son fotografías, documentos, vídeos, descargas, etc...*
+
+**/lib ->** Es un directorio estático y que puede ser compartible. Este directorio contiene bibliotecas compartidas que son necesarias para arrancar los ejecutables que se almacenan en los directorios */bin* y * */sbin*
+
+**/mnt ->** Tiene la finalidad de albergar puntos de montaje de los distintos dispositivos de almacenamiento.
+
+**/media ->** Es similar a la del directorio /mnt. Contiene los puntos de montaje de los medios extraíbles de almacenamiento *(Memorias USB, lectores CD-ROM, Unidades de disquete, etc..)*
+
+**/opt ->** Es estático y compartible. Almacena programas que no vienen con nuestro sistema operativo como por ejemplo Spotify, Google-earth, Google Chrome, TeamViewer, etc...
+
+**/proc ->** Se trata de un sistema de archivos virtual. Nos proporciona la información acerca de los distintos procesos y aplicaciones que se están ejecutando en nuestro sistema operativo.
+
+**/sys ->** Directorio que contiene información similar a la del directorio /proc. Dentro de esta carpeta podemos encontrar información estructurada y jerárquica acerca del kernel de nuestro equipo, de nuestras particiones y sistemas de archivo, de nuestros drivers, etc...
+
+**/root ->** Se trata de un directorio variable no compartible. Este directorio es el directorio /home del administrador del sistema *(usuario root)*
+
+**/srv ->** Se usa para almacenar directorios y datos que usan ciertos servidores que podamos tener instalados en nuestro ordenador.
+
+**/tmp ->** Es donde se crean y almacenan los archivos temporales y las variables para que los programas puedan funcionar de forma adecuada.
+
+**/usr ->** Es un directorio compartido y estático. Contiene la gran mayoría de programas instalados en nuestro sistema operativo. *(Todo el contenido almacenado en la carpeta /usr es accesible para todos los usuarios y su contenido es solo de lectura)*
+
+**/var ->** Contiene archivos de datos variables y temporales como por ejemplo los registros del sistema (logs), los registros de programas que tenemos instalados en el sistema operativo, archivos spool, etc. *(Su principal función es la de detectar problemas y solucionarlos. Se recomienda ubicar este directorio en una partición propia, y en caso de no ser posible es recomendable ubicarlo fuera de la partición raíz)*
+
+**/lost-found ->** Se crea en las particiones de disco con un sistema de archivos ext, los cuales usando herramientas podríamos recuperar nuestro sistema operativo *(por ejemplo, fsch)*. 
+- Si nuestro sistema no ha presentado problemas este directorio estará completamente vacío y, en el caso de haber problemas éste contendrá ficheros y directorios que han sido recuperados tras la caída del sistema operativo.
+
+#### Uso de bashrc y zshrc
+- ¿Qué es Bashrc en Linux? [https://www.compuhoy.com/que-es-bashrc-en-linux/](https://www.compuhoy.com/que-es-bashrc-en-linux/)
+- ¿Por qué deberías usar ZSH? [https://respontodo.com/que-es-zsh-y-por-que-deberia-usarlo-en-lugar-de-bash/](https://respontodo.com/que-es-zsh-y-por-que-deberia-usarlo-en-lugar-de-bash/)]
+
+ZSH, también llamado Z shell, es una versión extendida de Bourne Shell (sh), con muchas características y soporte para complementos y temas. Dado que se basa en el mismo shell que Bash, ZSH tiene muchas de las mismas características, y cambiar es muy sencillo.
+
+ZSH tiene demasiadas funciones para enumerarlas aquí, algunas mejoras menores en Bash, pero estas son algunas de las principales:
+- **CD Automático:**
+- **Expansión de ruta recursiva:** por ejemplo, <</u /lo /b>> se expande a <</usr /local /bin>>
+- **Corrección ortográfica y finalización aproximada:** si comete un pequeño error al escribir un nombre de directorio ZSH te lo autocompletará.
+- **Compatibilidad con complementos y temas:** ZSH incluye muchos marcos de complementos diferentes.
+- 
+
+  ~~~ bash
+	# Esto nos mostrará "Tu IP privada es:" y buscará dentro de nuestro nombre de host las interfaces de red, y con awk mostraremos sólamente el primer campo que nos aparece.
+echo "Tu IP privada es: $(hostname -I | awk '{print $1}')"
+  ~~~
+
+#### Actualización y upgradeo del sistema
+Actualizar nuestro sistema nos sirve para actualizar tanto archivos del sistema como binarios, librerías, etc....
+> En Parrot Security OS *no* se debe usar la función  **apt upgrade** para actualizar archivos del sistema, lo que se debe hacer en este caso es usar el comando **parrot-upgrade**, ya que actualizará todo el sistema sin dañar archivos importantes de este sistema.
+
+Por lo que se debe tocar así sólamente:
+- **Arch Linux:** pacman -Syu
+-  **GNU/Linux:** apt upgrade
+
+#### Búsquedas a nivel de sistema
+- Comandos Find y Locate en Linux: [https://www.hostinger.es/tutoriales/como-usar-comando-find-locate-en-linux/](https://www.hostinger.es/tutoriales/como-usar-comando-find-locate-en-linux/)
+
+Esto nos servirá mucho para detectar archivos que pertenezcan al grupo y usuario que queramos y demás.
+
+El siguiente comando buscará archivos desde el directorio raíz (/) con el nombre `passwd` y enviándolo al /dev/null con el identificador 2 (que es el de sterr) para que no nos aparezcan errores 2>/dev/null
+
+~~~ bash
+find / -name passwd 2>/dev/null
+~~~
+
+Este hará lo mismo pero sumándole el comand ls con su flag -l (para ver propiedades de los archivos), mientras que el segundo comando buscará todos los SUID desde la raíz del sistema.
+~~~ bash
+find / -name passwd 2>/dev/null | xargs ls -l
+find / -perm -4000 2>/dev/null
+~~~
+
+Para buscar por grupos símplemente debemos asignar la flag `-group` y nuestro nombre de grupo deseado:
+~~~ bash
+find / -group wheel 2>/dev/null
+~~~
+
+Buscará dentro del usuario `root` todo lo que sea de escritura, mientras que en el segundo, veremos que buscará desde `root` -files que sean ejecutables, enviándolo al stderr para no mostrar errores.
+~~~ bash
+find / -user root -writable 2>/dev/null
+find / -user root -executable 2>/dev/null -type f
+~~~
+
+Si alguna vez nos acordamos de una parte de un archivo pero no sabemos dónde está guardad ni si lo tenemos, es tan fácil como esto:
+> Supondremos que estamos buscando el ejecutable *dexdump.sh*
+
+~~~ bash
+find / -name dex\* 2>/dev/null
+find / -name \*exdum\* 2>/dev/null
+find / -name dex\*.sh 2>/dev/null
+~~~
+
+---
+
+#### Creación de Scripts en bash
+Por ahora no estaremos viendo al 100% bash, ya que eso lo tocaremos más adelante para crearnos una serie de herramientas que nos servirán para practicar y entender varios de los comados existentes.
+
+> El comando *seq 1 20* creará un bucle del 1 al 20
+~~~ bash
+for i in $(seq 1 20); do echo "[+] Iteración número $i"; done
+~~~
+
+La mejor manera para aprender cómo funciona este lenguaje de comandos es tratar de permanecer el mayor tiempo posible desde consola. Primero debemos aprender una serie de comandos básicos (en internet cuentas con muchas Cheat sheets), pero después de tener esta base bien cubierta debemos tratar de hacerlo todo con la consola, ya que es la mejor manera de aprender y adquirir soltura con este lenguaje.
+
+**Ejemplos sencillos:**
+Esta es nuestra interfaz de red enp2s0:
+~~~ bash
+2: enp2s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    inet 192.168.1.3/24 brd 192.168.1.255 scope global dynamic noprefixroute enp2s0
+~~~
+Y aquí simplemente nos mostrará :
+> Nos mostrará todas la interfaces *>* Filtrará enp2s0 que es nuestra interfaz de red *>* Desde abajo (tail) nos mostrará la primera línea *>* Elegiremos el segundo parámetro que nos aparece en la cola, que es nuestra dirección IP y nuestro broadcast *>* cortamos el delimitador '/' y escogemos el primer field para quitar el broadcast..
+~~~ bash
+ip a | grep enp2s0 | tail -n 1  | awk '{print $2}' | cut -d '/' -f 1
+~~~
+
+Este también nos hará lo mismo:
+~~~ bash
+ip a | grep enp2s0 | tail -n 1  | awk '{print $2}' | tr '/' ' ' | awk '{print $1}'
+~~~
+
+Dando como resultado símplemente nuestra dirección ip: *192.168.1.3*, ahora símplemente crearemos un *archivo.sh* para automatizarlo:
+~~~ bash
+#!/bin/bash
+echo -e "\n[+] Esta es tu dirección IP privada -> $(ip a | grep enp2s0 | tail -n 1  | awk '{print $2}' | cut -d '/' -f 1)\n"
+~~~
+> *Echo* nos mostrará por pantalla todo lo que esté entre comillas, y el parámetro *-e* nos servirá para incluir carácteres especiales, *\n*, por ejemplo es uno de ellos, que nos permitirá crear un salto de línea tanto al principio como al final del script.
+
+También podremos agregar colores tal que así (se crean directamente las variables):
+~~~ bash
+#!/bin/bash
+
+#Colours
+greenColour="\e[0;32m\033[1m"
+endColour="\033[0m\e[0m"
+redColour="\e[0;31m\033[1m"
+blueColour="\e[0;34m\033[1m"
+yellowColour="\e[0;33m\033[1m"
+
+echo -e "\n${yellowColour}[+]${endColour} ${blueColour}Esta es tu dirección IP privada -> ${endColour} ${redColour}$(ip a | grep enp2s0 | tail -n 1  | awk '{print $2}' | cut -d '/' -f 1)${endColour}\n"
+~~~
+Y este sería el resultado:
+![[bashscript1.png]]
+
+### Uso y manejo con Tmux
+- Guía de atajos y comandos de Tmux: [https://hack4u.io/wp-content/uploads/2022/05/Tmux-Cheat-Sheet.pdf]([https://hack4u.io/wp-content/uploads/2022/05/Tmux-Cheat-Sheet.pdf](https://hack4u.io/wp-content/uploads/2022/05/Tmux-Cheat-Sheet.pdf))
+
+*Tmux*  es muy útil ya que nos ayuda a mejorar la movilidad dentro de nuestro sistema operativo mediante terminales.
+
+*Cómo instalar:*
+~~~ bash
+cd
+git clone https://github.com/gpakosz/.tmux.git
+ln -s -f .tmux/.tmux.conf
+cp .tmux/.tmux.conf.local .
+~~~
+
+Si no te funciona el archivo de configuración es porque ya tenías abierta una sesión anterior, para cerrarla símplemente debemos escribir:
+*Para hacer un update a una configuración escribimos en modo comando dentro de tmux **^+b+I *** 
+
+>tmux new -s nombre_sesión = creará una sesión con el nombre asignado
+
+> Ctrl + b = Nos sirve para entrar en el modo de gestión Tmux.
+> Ctrl + b + , = Renombrará nuestra ventana
+> Ctrl + b + c = Creará otra ventana dentro de la misma sesión.
+> Ctrl + b + & = Cerrará la ventana actual.
+> Ctrl + b + m = Entrarás con el modo del ratón
+> Ctrl + b + % Divirá la consola verticalmente
+> Ctrl + b + " = Divirá la consola para mejor movilización.
+
+
+>Ctrl + b + d = Detatch una sesión de la consola
+>tmux list-sessions = Listará las sesiones que estén corriendo.
+ tmux attach -t nombresesion = Volverá a conectarnos con la sesión que queramos.
+
+*Mi configuración:*
+~~~ bash
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+echo "source -q ~/.tmux.conf.local
+run 'cut -c3- ~/.tmux.conf | sh -s _apply_configuration'
+
+
+# Plugins
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'dracula/tmux'
+
+set -g @dracula-show-powerline true
+set -g @dracula-show-left-icon session
+
+set -g @dracula-plugins 'cpu-usage ram-usage'
+
+run '~/.tmux/plugins/tpm/tpm'" >> ~/.tmux.conf
+
+~~~
+
+#### Uso y configuración de la Kitty (Opcional)
+La mejor forma para aprender y maniobrar por la Kitty es con la propia guía de los creadores de la misma, aquí dejo el enlace para indagar y entrar más en detalle con algunas configuraciones:
+
+La kitty nos permitirá editar una shell cmpleta desde cero
+
+- Overview - Kitty: [https://sw.kovidgoyal.net/kitty/overview/](https://sw.kovidgoyal.net/kitty/overview/)
+
+> Para instalar la kitty simplemente deberemos usar nuestro instalador de paquetes por defecto y escribir *kitty* posteriormente:
+
+~~~ bash
+# Arch Linux
+sudo pacman -Sy kitty
+
+# Other Linux Distributions
+sudo apt install kitty
+~~~
+
+Archivo de configuración normal para que funcione (en ~/.config/kitty/kitty.conf):
+~~~ bash
+enable_audio_bell no
+
+include color.ini
+
+font_family Iosevka Custom 9
+font_size 10
+
+disable_ligatures never
+
+url_color #61afef
+url_style curly
+
+map ctrl+left neighboring_window left
+map ctrl+right neighboring_window right
+map ctrl+up neighboring_window up
+map ctrl+down neighboring_window down
+
+#map f1 copy_to_buffer a
+#map f2 paste_from_buffer a
+#map f3 copy_to_buffer b
+#map f4 paste_from_buffer b
+
+cursor_shape beam
+cursor_beam_thickness 1.8
+
+mouse_hide_wait 3.0
+detect_urls yes
+
+repaint_delay 10
+input_delay 3
+sync_to_monitor yes
+
+map ctrl+shift+z toggle_layout stack
+tab_bar_style powerline
+
+inactive_tab_background #e06c75
+inactive_tab_foreground #000000
+active_tab_background #98c379
+tab_bar_margin_color black
+
+map ctrl+shift+enter new_window_with_cwd
+map ctrl+shift+t new_tab_with_cwd
+
+background_opacity 0.98
+
+shell zsh
+
+
+~~~
+
+Para descargar los archivos de configuración del color:
+~~~ bash
+curl https://raw.githubusercontent.com/rxyhn/tokyo/main/config/kitty/color.ini > ~/.config/kitty/color.ini
+~~~
+
+#### Uso del editor VIM
+Por aquí dejo una guía bastante buena donde se detallan varios atajos de teclado existentes para usar en Vim:
+- Vim Cheat Sheet: [https://vim.rtorr.com/](https://vim.rtorr.com/)
+> Recomiendo instalar nvim y posteriormente instalarle NvChad para mejor personalización
+
+Vim tiene por defecto los controles para desplazarse (izquierda, derecha, arriba y abajo)que son: 
+	   *k         
+	h     l
+	    j
+	
+Pero esto normalmente suele liar más a la gente, por lo que recomiendo usar las flechas que están en nuestro teclado y ya. 
+
+**En modo comando:**
+Para introducir datos -> i
+*Entrar en modo selección(Visual)* -> ctrl+v
+	- Seleccionar desde hasta el final de la línea -> shift+4
+
+- Para deshacer cambios-> u
+- Para rehacer cambios -> ctrl + r
+
+- Ir al principio de la línea -> 0 (Esto es un cero)
+- Ir al final de la línea -> $
+- Crear una nueva línea -> o
+
+>  Para poder mover, cortar, etc.. más de una línea, palabra símplemente debemos en modo comando introducir la cantidad que queremos seguido del comando:
+> 	 *Ej:* 10000dd (esto cortará 10000 líneas)
+ 
+- Moverte entre palabras -> w
+
+- Copiar una palabra -> yw
+- Cortar una palabra -> dw
+
+- Pegar lo cortado o copiado -> p
+
+- Copiar línea -> yy
+- Cortar línea -> dd
+
+Todo lo que escribamos con Vim se estará guardando en un registro temporal, por lo que, podríamos escribir directamente todo lo que hubieramos escrito antes, por ejemplo con esta palabra; *Probando ->*, para poder volver a copiarla símplemente deberemos usar un punto en modo comando *"."*
+
+- Empezar a grabar una macro -> q + caracter_deseado (qa: se guardará en a)
+	- Para repetir la macro símplemente seleccionamos cuantas veces quiere que lo haga -> 30@caractermacro
+- Filtrar -> /
+
+- Sustitur todas las palabras por otras -> *:%s/palabranterior/palabranueva*
+	- Aunque recomiendo ponerle una */g* al final para evitar problemas
+
+### Conexiones SSH - Bandit.overthewire.org
+SSH es el nombre de protocolo y del programa que lo implementa cuya principal función es el acceso remoto a un servidor poor medio de un canal seguro en el que toda la información está cifrada.
+
+Esto te puede servir para practicar *Bash Scripting* y empezar a saber como funciona el *file system* de Linux. 
+
+Puedes practicar uniéndote al siguiente servidor remoto:
+~~~ bash
+# La contraseña para el usuario bandit0 es bandit0
+ssh bandit0@bandit.labs.overthewire.org -p 2220
+~~~
+
+Si tenemos una terminal diferente y queremos tener otra configuración:
+~~~ bash
+# Permite ver que terminal tenemos
+echo $TERM
+
+# Usar otra terminal
+export TERM=nombre_terminal
+~~~
+
+#### Lectura de archivos especiales
+Puede ser que en alguna ocasión te encuentres con algún archivo que empiece por el símbolo *'-'*
+
+En tal caso, recuerda que a la hora de tratar de mostrar el contenido que este tenga, no podremos hacerlo de la forma tradicional, pues al contener guiones es probable que el sistema lo interprete como parámetros del comando que estés primeramente definiendo.
+
+Para ello hay muchas maneras, una de ellas es escribiendo la ruta absoluta o de las siguienets maneras:
+
+> Ruta absoluta -> *cat /home/usuario/-*
+> Ruta relativa (directorio actual)-> *cat ./-*
+> 
+> A través de script  (hará un cat desde el directorio que estés a -)-> *cat $(pwd)/-*
+> 
+> Buscará de forma recursiva todas las "words" en el directorio actual y enviándolo al stderr (nos aparecerá el resultado debajo de todo, por lo que podríamos concatenar con un *tail -n 1*, si es al revés simplemente el tail lo cambiamos por un head a través de una pipe *|* ):
+> 	*grep -r "\\w" 2>/dev/null*
+> 
+> Hará lo mismo pero mostrando el segundo campo y tomando como delimitador el caracter -> ":"
+> *El FS=":"* nos permite quitar esos dos puntos y podamos dividir el mismo parámetro.
+~~~ bash
+grep -r "\w" 2>/dev/null | tail -n 1 | awk '{print $2}' FS=":"
+~~~
+>
+ Con el comando cut
+~~~ bash
+grep -r "\w" 2>/dev/null | tail -n 1 | cut -d ':' -f 2
+~~~
+>
+>Con el comando *tr* (cambiará el primer dato por el segundo) y printando el último argumento:
+~~~ bash
+grep -r "\w" 2>/dev/null | tail -n 1 | tr ':' ' ' | awk 'NF{print $NF}'
+~~~
+
+Podríamos también añadirle un texto más la contraseña  que estará dentro del parámetro *$*, aunque esta opción es por jugar un poco:
+~~~ bash
+echo -e "\n[+] La contraseña es $(grep -r "\w" 2>/dev/null | tail -n 1 | awk '{print $2}' FS=":")"
+~~~
+
+Para referirte a archivos con espacios debes escapar los espacios, o referirte a estos con los espacios pero haciendo uso de comillas dobles.
+
+Esto es así debido a la forma que tiene *Bash* de interpretar los archivos a la hora de aplicarles un comando. En caso de referirte a un archivo con espacios, si no escapas o encasillas la cadena entre comillas dobles se pensará que le estás diciendo que quieres aplicar una acción sobre una serie de archivos que le indicas.
+
+Para ello deberíamos usar mucho el *tab <- ->*, ya que autocompletará muchas partes.
+> Comillas y slash invertido:
+~~~ bash
+cat "spaces in this filename"
+cat spaces\ in\ this\ filename
+~~~~
+
+#### Directorios y archivos ocultos
+Todo lo que empieza por *'.'* es oculto en el sistema. Los archivos ocultos (también llamados archivos dot) en los sistemas operativos Unix, son archivos que se utilizan para ejecutar ciertos scripts o para almacenar la configuración de algunos servicios del host.
+Esto no tiene por qué ser del todo así, dado que también puedes crearte tus propios archivos y directorios ocultos.
+
+Buscará todos los *. (dots)*  desde el directorio actual de tipo file, fltrándolo con *grep* haciendo verbose y la E, la cual nos permite buscar múltiples ficheros (aquí abajo son bashrc, profile y logout), agregándole al output con xargs el comando cat para que nos lo muestre. 
+~~~ bash
+find . -type f | grep -vE "bashrc|profile|logout" | xargs cat
+~~~
+
+#### Detección del tipo y formato de archivos
+Muchos formatos de archivo no están pensados para leerse como text. Si dicho archivo se ve accidentalmente como un archivo de texto, su contenido será ininteligible. Sin embargo, a veces la firma del archivo se puede reconocer cuando se interpreta como texto.
+
+Por aquí dejo una lista de firmas de archivos. La columna correspondiente a *Firma Hexadecimal* está directamente relacionada a los primeros bytes que en comparación a los primeros bytes del archivo con el que estamos tratando nos permitirán saber el tipo de formato al que nos estamos enfrentando:
+
+- Lista de firmas de archivos: [https://en.wikipedia.org/wiki/List_of_file_signatures](https://en.wikipedia.org/wiki/List_of_file_signatures)
+
+Buscamos directorios ocultos de tipo file y grepeamos la palabra *\-file*, concatenándolo con el comando file para que  nos muestre qué formato de archivo es:
+~~~ bash
+find . -type f | grep "\-file" | xargs file
+~~~
+
+Aquí podemos apreciar que solamente un file es de tipo **ASCII text**, por lo que la contraseña seguramente esté ahí.
+![[formatoarchivos.png]]
+
+#### Búsquedas precisas de archivos
+- ¿Cómo buscar y encontrar archivos en Linux?: [https://www.ionos.es/digitalguide/servidores/configuracion/comando-linux-find/](https://www.ionos.es/digitalguide/servidores/configuracion/comando-linux-find/)
+
+Buscará desde tu directorio actual en todos las carpetas ocultas archivos y no buscará ejecutables (de ahí el *!*) de tamaño 1033 bytes (en este caso la c se corresponde a bytes), también veremos el formato del archivo:
+~~~ bash
+find . -type f ! -executable -size 1033c | xargs file
+~~~
+![[busquedaprecisa.png]]
+
+Para buscar por usuarios (bandit7) y grupos (bandit6) con un tamaño de 33 bytes podríamos usar lo siguiente:
+~~~ bash
+find . -type f -user bandit7 -group bandit6 -size 33c 2>/dev/null | xargs cat
+~~~
+
+Con esto ya sabrás un poco sobre como aplicar búsquedas a nivel de sistema para encontrar aquellos archivos cuyas propiedades específicas recuerdes. 
+
+#### Métodos de filtrado de datos
+- AWK Cheat Sheet: [https://www.shortcutfoo.com/app/dojos/awk/cheatsheet](https://www.shortcutfoo.com/app/dojos/awk/cheatsheet)
+- AWK Cheat Sheet 2:[https://bl831.als.lbl.gov/~gmeigs/scripting_help/awk_cheat_sheet.pdf](https://bl831.als.lbl.gov/~gmeigs/scripting_help/awk_cheat_sheet.pdf)
+También dejo un enlace de interés por si quieres indagar un poco más acerca del uso del comando *cut*:
+- Cheat Sheet: Cutting text with cut: [https://bencane.com/2012/10/22/cheat-sheet-cutting-text-with-cut/](https://bencane.com/2012/10/22/cheat-sheet-cutting-text-with-cut/)
+
+Para que me muestre la flag, que está dentro de data.txt pero al lado de la palabra millionth:
+~~~ bash
+cat data.txt | grep "millionth" | cut -d ' ' -f 1
+~~~
+
+Lo podríamos concatenar con bash scripting creando un array con el valor *i* desde el 1 hasta el 50 para que busque con nuestros parámetros asignados.
+~~~ bash
+for i in $(seq 1 50); do echo -e "Probando con $i:"; cat example | cut -d ' ' -f $i; done
+~~~
+No aconsejo usar el comando *cut*, sino con el comando  *awk*:
+~~~ bash
+cat example | awk '{print $2}'
+~~~
+
+Para cambiar una palabra por otra como en VIM, símplemente escribimos lo siguiente usando el comando *sed* más la *s* de sustitución, para aplicarlo a toda la línea y no cambiar símplemente la primera palabra que encuentre colocamos una *g* al final :
+~~~ bash
+echo "Hola esto es una prueba" | sed 's/prueba/probando/g'
+~~~
+
+- Tutorial de uso de SORT: [https://www.ibidemgroup.com/edu/tutorial-sort-linux-unix/](https://victorhckinthefreeworld.com/2021/10/21/el-comando-uniq-de-gnu/)
+- Tutorial de uso de UNIQ: [https://victorhckinthefreeworld.com/2021/10/21/el-comando-uniq-de-gnu/](https://victorhckinthefreeworld.com/2021/10/21/el-comando-uniq-de-gnu/)
+
+Para bandit 8 necesitaremos encontrar la contraseña que está en *data.txt* y está en la única línea de texto que aparece una sola vez:
+> - El comando sort nos aplicará un ordenamiento alfabético de todas las líneas de la A a la Z. (Este comando debemos usarlo, sino no funcionará el siguiente comando que nos aparece
+> - )
+> -  El comando uniq junto a la flag -u nos mostrará la única línea que es única 
+> 
+~~~ bash
+sort data.txt | uniq -u
+~~~
+
+#### Interpretación de archivos binarios
+El comando **strings** de Linux permite ver los caracteres legibles para humanos dentro de cualquier archivo.
+El comando **strings** no tiene nada de complicado y su uso básico es muy sencillo. Proporcionamos el nombre del archivo que deseamos que las cadenas busquen en la línea de comando y listo. Parece una tontería, pero nos puede llegar a servir de cara al futuro en ciertas circunstancias.
+
+Usamos strings en data.txt, filtramos por *= = =*  | usamos la primera línea desde el final y printeamos el final de la línea (que es donde está el resultado)
+~~~ bash
+strings data.txt | grep "===" | tail -n 1  | awk 'NF{print $NF}'
+~~~
+
+#### Codificación y decodificación en Base64
+El algoritmo de codificación **Base64** no es un algoritmo de cifrado, se decodifica fáclmente y, por lo tanto, no debe utilziarse como un método de cifrado seguro. No recomiendo qu utilicéis esta técnica para proteger datos confidenciales, ya que se puede tensar en cuestión de segundos, en tal caso, es recomendable emplear métodos de cifrado seguros.
+
+Como usuario bandit10, símplemente debemos descifrar con:
+~~~ bash
+# Forma rápida
+base64 -d data.txt
+# Normal
+cat data.txt | base64 -d
+~~~
+
+#### Cifrado César y uso de tr pra la traducción de caracteres
+- Para emplear rotaciones al cifrado: [https://rot13.com](https://rot13.com)
+
+Para los más curiosos, el cifrado **César** lleva el nombre de **Julio César**. Es uno de los tipos de cifrados más antiguos y se basa en el cifrado monoalfabético más simple. Se considrera un método débil de criptografía, ya que es fácil decodificar el mensaje debido a sus técnicas de seguridad mínimas (sólamente tiene 25 combinaciones posibles).
+
+Aquí usamos la sustitución de palabras para el método de cifrado césar y nos dice que tiene una rotación de 13 posiciones, aquí nos da el resultado 
+~~~ bash
+cat data.txt | tr '[G-ZA-Fg-za-f]' '[T-ZA-St-za-s]'
+cat data.txt | tr '[A-Za-z]' '[N-ZA-Mn-za-m]'
+~~~
+
+#### Creamos un descompresor recursivo automático de archivos en Bash (b12->13)
+El sistema hexadecimal es el sistema de numeración posicional que tiene como base el 16. Su uso actual está muy vinculado a la informática.
+
+Script de la academia para esta clase, en caso de que quieras echar un ojo y tenerlo a mano:
+- Script 'decompressor.sh': [https://hack4u.io/wp-content/uploads/2022/05/decompressor.sh](https://hack4u.io/wp-content/uploads/2022/05/decompressor.sh)
+
+Para poder ver los hexadecimales de cualquier archivo símplemente debemos usar el comando *xxd*
+> El segundo ejemplo de comando, nos muestra el archivo /etc/hosts *|* viendo el hexadecimal de este y mostrando sólamente estos hexadecimales *|* con xargs mostrándolo todo en una sóla línea *|* y con tr -d quitamos el delimitador que en este caso son los espacios
+~~~ bash
+cat /etc/hosts | xxd
+cat /etc/hosts | xxd -ps | xargs | tr -d ' '
+~~~
+
+Para conseguir la inversa símplemente cogemos el resultado de este y decimos que nos lo muestre, agregándole de nuevo el comando *xxd -ps*  y reverse (-r)
+~~~ bash
+echo 23205374616e6461726420686f7374206164647265737365730a3132372e302e302e3120206c6f63616c686f7374206c6f63616c686f73742e6c6f63616c646f6d61696e2064726f706c6574312073657267696f700a3a3a3120202020202020206c6f63616c686f7374206970362d6c6f63616c686f7374206970362d6c6f6f706261636b0a666630323a3a31202020206970362d616c6c6e6f6465730a666630323a3a32202020206970362d616c6c726f75746572730a23205468697320686f737420616464726573730a3132372e302e312e31202073657267696f50206861636b34750a3139322e3136382e312e31373020716e6170616c6d756465796e650a31302e31302e31312e3138392070726563696f75732e6874620a31302e31302e31312e313836206d65746170726573732e6874620a31302e31302e31312e3138302073686f7070792e687462206d61747465726d6f73742e73686f7070792e6874620a3139322e3136382e312e3235332032736d722e6c6f63616c0a31302e3132392e39362e31343920756e6966692e6874620a | xxd -ps -r
+~~~
+
+En Linux nos puede dar problemas si al aplicar unos filtros a unos archivos o algo parecido queremos meterlo en un archivo nuevo, para ello se usa el comando *tee*, aunque para nuestro caso, usaremos el comando *sponge* (descarga el paquete moreutils) para agregarlo al mismo archivo.
+No usaremos *-ps* porque queremos los hexadecimales enteros y sólamente reversearlo.
+~~~ bash
+cat data | xxd -r | sponge data
+~~~
+
+Posteriormente veremos qué tipo  de archivo es con el comando *file* y nos dice que **data**:
+> data: gzip compressed data, was "data2.bin", last modified etc...
+
+Lo renombramos con el comando mv a una extenxión gz quedando como *data.gz*
+
+Usaremos el comando 7z (ya que es más intuitivo y nos sirve para todos los paquetes) y las flags que queramos:
+- *7z l data* = nos permite listar el contenido del comprimido
+- *7z x data* = nos permite extraer el contenido del comprimido
+
+Al descomprimir veremos que se nos habrá creado un archivo llamado *data2.bin*, por lo que le pasaremos de nuevo el comando *file* para ver qué es y nos dice:
+> data2.bin: bzip2 compressed data, block size = 900k
+
+Al decirnos que es un archivo comprimido nos parece un poco raro, por lo que volveremos a usar con el comando *7z l data2.bin* y nos aparecerá que hay un archivo dentro llamado *data2*, por lo que ahora lo volveremos a descomprimir
+
+Aquí nos damos cuenta que todos los archivos son comprimidos, por lo que de poco en poco iremos viendo y extrayendo aunque es un poco lento, para ello crearemos un script el cual nos lo automatice.
+
+Creamos un archivo de bash con el nombre que queramos, yo lo tengo tal que así (arriba junto al título de esta sección se encuentra el enlace al comando completo):
+~~~ bash
+vim decompressor.sh
+~~~
+
+**decompresor.sh**
+~~~ bash
+#!/bin/bash
+
+# Creamos una función para la parte de Captura Ctrl+C la cual nos mostrará un texto diciendo "Saliendo... y posteriormente se saldrá del programa"
+function ctrl_c(){
+  echo -e "\n\n[!] Saliendo...\n"
+  exit 1
+}
+# Captura Ctrl+C
+trap ctrl_c INT
+
+# Variable para definir cuál es el archivo para realizar todo el proceso:
+first_file_name="data.gz"
+
+# Creamos una variable que nos lista el contenido de data.gz, nos muestra 3 líneas desde el final, luego la primera línea y printea el final de la línea, que es donde está el contenido del comprimido
+decompressed_file_name="$(7z l data.gz | tail -n 3 | head -n 1 | awk 'NF{print $NF}')"
+
+# Descomprimimos el nombre del resultado de la anterior variable 'decompressed_file_name' y enviamos el resultado (tanto el stderr como el stdout) para que no se nos muestre ningún error ni output.
+7z x $first_file_name &>/dev/null
+
+# Mientras haya archivos descomprimiéndose muestra Nuevo archivo descomprimido: nombre_archivo_descomprimido
+while [ $decompressed_file_name ]; do
+  echo -e "\n[+] Nuevo archivo descomprimido: $decompressed_file_name"
+  7z x $decompressed_file_name &>/dev/null
+
+  # Listará el decompressed_file_name enviando los errores al /dev/null:
+  decompressed_file_name="$(7z l $decompressed_file_name 2>/dev/null | tail -n 3 | head -n 1 | awk 'NF{print $NF}')"
+done
+
+~~~
+![[data9bin.png]]
+
+#### Manejo de pares de claves y conexiones SSH (b13->14)
+Como funcina internet en 5 minutos: [https://www.youtube.com/watch?v=7_LPdttKXPc](https://www.youtube.com/watch?v=7_LPdttKXPc)
+Los pares de claves SSH son dos claves criptográficamente seguras que pueden usarse para autenticar a un cliente y un servidor SSH. Cada par de claves está compuesto por una *clave pública* y una *clave privada*.
+
+El **cliente** mantiene la *clave privada* y debe mantenerla en absoluto secreto. Poner en riesgo la clave privada puede permitir a un atacante no autorizado iniciar sesión en los servidores que están configurados con la clave pública asociada sin autenticación adicional. Como medida de precaución adicional, es recomendable cifrar la clave en el disco con una frase de contraseña.
+
+La *clave pública* asociada puede compartirse libremente sin ninguna consecuencia negativa. La clave pública puede usarse para cifrar mensajes que **sólo la clave privada puede descifrar**. Esta propiedad se emplea como forma de autenticación mediante el uso del par de claves.
+
+Debemos instalarnos *OpenSSH*, para inicializar el servicio ssh símplemente escribimos *sudo systemctl start sshd*.
+
+La localización de las claves se encuentran en */home/usuario/.ssh*
+
+**SSH Commands:**
+- *ssh-keygen* -> Generamos un par de claves pública y privada (id_rsa.pub -id_rsa )
+- *ssh-copy-id -i id_rsa usuario@direccIP* -> Copiará la clave privada del usuario.
+- *ssh -i id_rsa usuario@direccIP* -> usará el id_rsa para acceder al usuario.
+
+Si tu clave pública la conviertes en claves autorizadas (lo copias como *authorized_keys*) otra persona habiendo copiado tu clave pública podrá acceder sin necesidad de contraseña, pero claramente habiendo copiado esta clave pública a su archivo /home/usuario/.ssh/authorized_keys (*atacante*).
+
+En resumen, que si alguien copia tu clave pública o privada tiene acceso sin necesidad de contraseña a tu usuario y equipo.
+
+#### Uso de netcat para realizar conexiones (b14->15)
+En total existen 65535 puertos y varios protocolos como el TCP y el UDP.
+**Protocolos:**
+- *TCP ->* Garantiza que el orden de los paquetes viaje en el orden correcto, que lleguen al destinatario, que no haya fragmentación o se pierdan paquetes por el camino.
+- *UDP ->* Es lo contrario al TCP, ya que este no garantizará que lleguen todos los paquetes a su destinatario y pudiendo perderse unos cuantos por el camino.
+
+Netcat es una herramienta de línea de comando que sirve para escribir y leer datos en la red. Para la transmisión de datos, Netcat uso los protocolos de red *TCP/IP y UDP*. La herramienta proviene originalmente del mundo Unix; desde entonces, se ha expandido a todas las plataformas.
+
+Gracias a su universalidad, a Netcat se la llama **"La navaja suiza del TCP/IP"**. Puede utilizarse, por ejemplo, para diagnosticar errores y problemas qu afecten a la funcionalidad y la seguridad de una red. Netcat también puede escanear puertos, hacer streaming de datos o simplemente transferirlos. Además, permite configurar servidores de chat y de web e iniciar consultas por correo. Este software minimalista, desarrollado a mediados de los 90, puede operar en modo servidor y cliente.
+
+Solamente como bandit14 deberemos usar este comando, e introduciendo cualquier caracter nos pedirá la contraseña actual de nuestro usuario, luego de esto, nos aparecerá una nueva contraseña.
+~~~ bash
+nc localhost 30000
+~~~
+
+Nos conectamos como bandit15 con la contraseña que nos han proporcionado
+
+#### Uso de conexiones encriptadas (b15->16)
+- **Ncat** puede encriptar el tráfico SSL. En modo de conexión, basta con añadir la opción '*-ssl*'
+~~~ bash
+ncat --ssl 127.0.0.1 30001
+~~~
+
+#### Creando nuestros propios escáneres en Bash (b16-17)
+Dejo por aquí los 2 scripts que hemos creado para la clase:
+- Script '**hostScan.sh**': [https://hack4u.io/wp-content/uploads/2022/05/hostScan.sh](https://hack4u.io/wp-content/uploads/2022/05/hostScan.sh)
+- Script '**portScan.sh**': [https://hack4u.io/wp-content/uploads/2022/05/portScan.sh](https://hack4u.io/wp-content/uploads/2022/05/portScan.sh)
+
+Para comprobar cuáles son los puertos abiertos podríamos enviar una cadena vacía al puerto correspondiente y comprobar (con la && juntamos el comando mientras con los dos || es un OR)
+~~~ bash
+(echo '' > /dev/tcp/localhost/22) 2>/dev/null && echo "El puerto está abierto" || echo "El puerto está cerrado"
+~~~
+
+Más avanzado para la búsqueda
+~~~ bash
+for port in $(seq 1 65535); do
+(echo '' > /dev/tcp/localhost/6600) 2>/dev/null && echo "[+] $port - OPEN" & 
+done ; wait
+~~~
+
+Podríamos usarlo también para comprobar hosts activos en nuestra red:
+~~~ bash
+ping -c 1 192.168.1.5 &>/dev/null && echo "[+] El host está activo" || echo "[-] El host no está activo"
+~~~
+
+Para no tener que esperar si el host no está activo.
+~~~ bash
+timeout 1 bash -c "ping -c f 192.168.1.5 &>/dev/null" && echo "[+] El host está activo" || echo "[-] El host no está activo"
+~~~
+
+Podemos crear un directorio temporal (dentro de la carpeta /tmp) con *mktemp -d*
+
+Archivo para listar todos los puertos para bandit 16-17:
+~~~ bash
+#!/bin/bash
+
+function ctrl_c(){
+        echo -e "\n\n[Saliendo...]\n"
+        exit 1
+}
+
+#CTRL+C
+trap ctrl_c INT
+
+for port in $(seq 31000 32000); do
+        (echo '' > /dev/tcp/127.0.0.1/$port) 2>/dev/null && echo "[+] $port - OPEN"
+done
+~
+~~~
+
+La forma más rápida sería con el comando *nmap*, el T5 es la plantilla de velocidad y es la más rápida (T1-T5), v es de verbose y -n es para que no aplique resolución DNS
+~~~ bash
+nmap --open -T5 -v -n -p31000-32000 127.0.0.1
+~~~
+
+Nos conectamos mediante Netcatç
+~~~ bash
+ncat --ssl localhost puertos_abiertos
+~~~
+
+Conseguiremos una clave por ssh, por lo que cambiamos sus permisos a lectura y escritura sólamente para el propietario (600), y usamos esta conexión para conectarnos mediante el localhost de la máquina
+~~~ bash
+ssh -i id_rsa bandit17@localhost -p 2220
+~~~
+
+Para comprobar todas las contraseñas del usuario actual símplemente cateamos */etc/bandit_pass/bandit17*
+
+#### Detección de diferencias entre archivos (b17-18)
+Aquí dejo algunos ejemplos del comando *diff*:
+- Comparar las diferencias con el comando diff: [https://eltallerdelbit.com/comando-diff-ejemplos/](https://eltallerdelbit.com/comando-diff-ejemplos/)
+
+Podremos mirar primero cuantas líneas tiene cada archivo con el comando *wc -l*
+
+Podremos usar el comando diff junto a los dos archivos para comprobar las diferencias:
+~~~ bash
+diff passwords.new passwords.old
+~~~
+Nos aparecerá esto:
+- *<* -> Nos dirá que se ha quitado
+- *>* -> Nos dirá que se ha cambiado por este
+
+![[diff.png]]
+> En este caso la flag que se ha quitado es la correcta 
+
+Si introducimos la Flag nos dirá que no tenemos acceso, porque si nos vamos a bandit18-19 en OverTheWire.org, nos dirá que se ha modificado la *.bashrc*.
+
+#### Ejecución de comandos por SSH (b18-19)
+A través del archivo de configuración *.bashrc* o *.zshrc*, es posible definir una serie de acciones a llevar a cabo a la hora de obtener una consola interactiva, en este caso tras ingresar por SSH.
+
+Es por ello que tras ingresar, somos expulsados de forma inmediata, dado que así ha sido definido en el archivo de configuración *.bashrc* para el caso que estamos tratando. Si colamos un comando al final de nuestra línea al aplicar una autenticación por SSH, lograremos que ese comando sea introducido a nivel de sistema antes de que se interprete el archivo de configuración pertinente.
+
+Podríamos intentar inyectar un comando para traspasar el ssh, ejecutando el comando antes de que no permita conectarnos
+~~~ bash
+sshpass -p '810zq8IK64u5A9Lb2ibdTGBtlcSZsoe8' ssh bandit18@bandit.labs.overthewire.org -p 2220 bash
+~~~
+
+Este nos permitirá conectarnos a su shell (bash), por lo que si listamos nos aparecerá un archivo llamado *readme*, al cual mostrando su contenido nos aparecerá una flag que será para *bandit19*.
+
+#### Abusando de privilegio SUID para migrar de usuario (b19-20)
+Los privilegios SUID ya vimos para qué servían, pero lo vuelvo a explicar.
+**SUID** es un permiso de archivo especial para archivos ejectuables que permite a otros usuarios ejectuar el archivo con los permisos efectiovs del propieteario del archvivo. **SGID**, por el contrario, es un permiso de archivo especial que también se aplica a los archivos ejecutables y permite a otros usuarios heredar el GID efectivo del propietario del grupo de archivos.
+
+**SUID** significa "*establecer ID de usuario*" (Set Owner User ID) y **SGID** significa "*establecer ID de grupo*" (Set Group ID up on Execution)
+
+Nos permitirá ejecutar el archivo *bandit20-do*, el nos sirve para ejecutar archivos como bandit20 aunque seamos bandit19
+
+Aquí podremos usar dos shells, las cuales se ejecutarán como bandit20
+~~~ bash
+./bandit20-do sh
+./bandit20-do bash -p
+~~~
+
+Podremos ver la contraseña como dijimos anteriormente en */etc/bandit_pass/bandit20*
+
+#### Jugando con conexiones (b20-21)
+Por aquí dejo un material de apoyo por si quereis indagar un poco más acerca del uso del comando **Netcat**:
+- Usando Netcat - Algunos comandos prácticos: [https://blog.desdelinux.net/usando-netcat-algunos-comandos-practicos](https://blog.desdelinux.net/usando-netcat-algunos-comandos-practicos)
+
+Si listamos nos aparecerá un SUID en el archivo *suconnect*, el cual si ejecutamos nos pedirá que introduzcamos un puerto.
+> Realizará una conexión al localhost en el puerto que especifiquemos como un argumento de línea de comando. Este leerá una línea de texto desde la conexión y comparará esta a la contraseña del nivel anterior (bandit20). Si la contraseña es correcta, ésta transmitirá la contraseña al siguiente nivel (bandit21)
+
+Podríamos abrir un puerto temporal como primera solución
+~~~ bash
+nc -nlvp 4646
+~~~
+- *n* -> No aplicará resolución DNS
+- *l* -> Listen mode
+- *v* -> Verbose
+- *p* -> Puerto
+
+Abrimos otra terminal y mientras una está escuchando por el puerto 4646, con la nueva ejecutaremos el script anteriormente visto *(suconnect)* a través del puerto 4646 también:
+~~~ bash
+./suconnect 4646
+~~~
+
+Nos aparecerá que tenemos conexión en nuestro localhost a través del puerto 60114:
+> Connection received on 127.0.0.1 60114
+
+Si intentamos otro comando nos aparecerá como Failed, pero como sabemos que tenemos que introducir la contraseña de nuestro usuario actual, símplemente la introducimos con la conexión establecida y nos aparecerá la nueva.
+![[jugando-conconexiones.png]]
+
+#### Abusando de tareas Cron (1/3) (b21-22)
+Cron es un administrador de tareas de Linux que permite ejecutar comandos en un momento determinado, por ejemplo, cada minuto, día, semana o mes. Si queremos trabajar con cron, podemos hacerlo a través del comando *crontab*.
+
+El formato de configuración de cron es el siguiente: *Minuto Hora Dia-del-mes Mes Dia-de-la-semana Comando-a-ejecutar*
+
+El intervalo de tiempo se especifica mediante 5 campos que representan, de izquierda a derecha:
+- **Minutos ->** de 0 a 59
+- **Horas ->** de 0 a 23
+- **Día del Mes ->** de 1 a 31
+- **Mes ->** de 1 a 12
+- **Día de la semana ->** de 1 a 6 lunes a sábado (1=lunes, 2=martes,etc) y o 7 el domingo.
+
+**Ejemplo:**
+*Minuto - Hora - Día del mes - Mes - Día de la semana*
+> 30 9 20 7 4 -> A las 9:30 AM del día 20 de julio y que sea jueves
+> 30 9 20 7 *  -> A las 9:30 AM del día 20 de julio sin importar el día de la semana.
+> 20 * * * 6  -> Al minuto 20 de cada hora de los sábados
+> 20 * * 1 6 -> Al minuto 20 de cada hora de los sábados de enero
+
+Si quisiéramos especificar todos los valores posibles de un parámetro (minutos, horas, etc.) podemos hacer uso del asterisco (`*`).
+Esto implica que si en lugar de un número utilizamos un asterisco, el comando indicado se ejecutará cada minuto, hora, día de mes, mes o día de la semana, como en el siguiente ejemplo:
+`*****/home/user/script.sh`
+
+En el directorio /etc/cron.d nos aparecerá las diferentes actividades para cron, por lo que si estamos bandit21, debemos ver el *cronjob_bandit22* que nos dirá:
+`@reboot bandit22 /usr/bin/cronjob_bandit22.sh &>/dev/null`
+`***** bandit 22 /usr/bin/cronjob_bandit22.sh &>/dev/null`
+Por lo que nos dice que siempre está ejecutandose el archivo */usr/bin/cronjob_bandit22.sh*, por lo que si vemos que es:
+
+![[cronjobbandit22.png]]
+Osea, que cambia los permisos del fichero dentro de /tmp/ a 644 (rw-r--r--) y muestra la contraseña para bandit22 en este mismo archivo, por lo que si hacemos un cat a este nos aparecerá la flag para bandit22.
+
+##### Abusando de tareas cron (2/3) (b22-23)
+¿Quieres ver algunos ejemplos para entender mejor la lectura e interpretación de las tareas Cron?, te dejo por aquí el siguiente material de apoyo:
+- Cron & Crontab, explicados: [https://blog.desdelinux.net/cron-crontab-explicados/](https://blog.desdelinux.net/cron-crontab-explicados)
+Al seguir casi los mismos pasos, (mirando el archivo */etc/cron.d/cronjob_bandit23*), nos dirá que el archivo que se ejecuta está en /usr/bin/cronjob_bandit23.sh, por lo que si miramos este script nos aparecerá lo siguiente:
+
+![[cronjobbandit23.png]]
+
+En mytarget está diciendo que somos el usuario bandit23 (ya que es para el cronjob de este mismo), le está haciendo un hash md5sum, cortando el delimitador ' ' (un espacio) y cogiendo el primer field (campo), apareciendo lo siguiente `8ca319486bfbbc3663ea0fbe81326349`, por lo que en */tmp/8ca319486bfbbc3663ea0fbe81326349* se está guardando la contraseña de bandit23.
+
+##### Abusando de tareas cron (3/3) (b23-24)
+Con esta clase concluimos las tareas Cron.
+
+Esta parte deciros que es fundamental, sobre todo de cara a los módulos de Hacking que vamos a estar tocando en la academia, pues en muchas de las ocasiones veremos cómo nos será necesario no sólo identificar qué tareas se ejecutan en el sistema a intervalos regulares de tiempo, sino también saber cómo poder abusar de estas para elevar nuestros privilegios.
+
+Volvemos a ver los cronjobs que nos lleven a lo siguiente en bandit 24:
+![[cronjobbandit24.png]]
+Nos dice que cambia de directorio a */var/spool/bandit24/foo*, por lo que nos dirigiremos a /var/spool/bandit24 y listaremos, encontrando que la carpeta *foo* tiene los siguientes permisos:
+`drwxrwx-wx 3 root bandit24 4096 Feb 12 22:51 foo`
+Osea, que podremos escribir y acceder pero no leer (ya que somos *otros*), por lo que podremos crear cosas.
+
+Con esto ya podemos saber que todo aquel script que se envíe podrá ser ejecutado como el usuario bandit24.
+
+Creamos una ruta temporal, para ello probaremos a crear una variable del comando para crear una ruta temporal sin tener que introducir directamente (no es obligatorio pero así empezaremos a manejarnos mejor por bash scripting) y creamos un archivo:
+~~~ bash
+dir_name=$(mktemp -d)
+cd $dir_name
+vim script.sh
+~~~
+
+Lo haremos en este directorio temporal para no perderlo de vista, símplemente cateándolo después al directorio */var/spool/bandit24/foo*, y para tenerlo ya definido le pondremos permisos de ejecución para todos a este script `chmod +x script.sh`.
+~~~ bash
+#!/bin/bash
+
+cat /etc/bandit_pass/bandit24 > /tmp/tmp.WYeOVpyghT/bandit24_password.log
+chmod o+r /tmp/tmp.WYeOVpyghT/bandit24_password.log
+~~~
+> Esto lo que consigue es hacer un cat sobre /etc/bandit_pass/bandit24 y enviar el output a nuestro directorio temporal
+
+Agregamos a otros permisos de escritura y acceso a nuestro directorio temporal:
+`chmod o+wx $dir_name` o `chmod o+wx .`
+Y copiamos nuestro script.sh al directorio objetivo:
+`cp script.sh /var/spool/bandit24/foo/example`
+`chmod +x /var/spool/bandit24/foo/example`
+
+Podremos ver qué pasa en cada momento en el directorio actual con:
+~~~ bash
+watch -n 1 ls -l
+~~~
+Y podremos ver cómo al ejecutarse dentro del cronjob se incluirá un archivo que es el que hemos definido anteriormente como bandit24_password.log:
+
+Si nos aparece como 0 bytes significa que no está bien diseñado el script, prueba con algunos cambios para que aparezca como la imagen de abajo, osea con 33bytes.
+![[bandit24password_log.png]]
+![[bandit24passwgood.png]]
+
+##### Comprendiendo las expresiones de las tareas Cron
+Por aquí comparto un enlace para que lo tengáis a mano y podáis practicar más por vuestra cuenta:
+- [https://www.site24x7.com/es/tools/crontab/cron-generator.html](https://www.site24x7.com/es/tools/crontab/cron-generator.html)
+
