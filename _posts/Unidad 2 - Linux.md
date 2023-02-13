@@ -1,6 +1,11 @@
 ---
-banner: "![[bannerT2Hack4u.jpg]]"
-banner_y: 0.5
+title: TITLE
+date: YYYY-MM-DD HH:MM:SS +/-TTTT
+categories: [TOP_CATEGORIE, SUB_CATEGORIE]
+tags: [TAG]     # TAG names should always be lowercase
+---
+---
+![[imgs/bannerT2Hack4u.jpg]]"
 ---
 # Unidad 2 - Temario
 ***
