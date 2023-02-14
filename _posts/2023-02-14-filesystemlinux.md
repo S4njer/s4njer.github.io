@@ -2,7 +2,7 @@
 layout: post
 title: 'Estructura del FileSystem (Linux)'
 date: 2023-02-14
-categories: filesystem, Linux, Directories
+categories: filesystem
 ---
 ### Estructura de directorios del sistema (FileSystem de Linux)
 A modo de sumario, dejo la descripción de cada ruta del sistema:
