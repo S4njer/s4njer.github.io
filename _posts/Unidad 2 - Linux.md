@@ -4,7 +4,7 @@ categories: [Linux, Bash]
 tags: [TAG]     # TAG names should always be lowercase
 ---
 ---
-![[imgs/bannerT2Hack4u.jpg]]"
+![[images/bannerT2Hack4u.jpg]]"
 ---
 # Unidad 2 - Temario
 ***
