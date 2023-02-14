@@ -378,12 +378,11 @@ Por ejemplo, hay comandos en python el cual nos permite asignar nuestra *UID* a 
 # Esto en el caso del ejecutable de python3
 ~~~ python
 import os
- os.setuid(0)
+os.setuid(0)
 os.system("whoami")
 
 'root 0'
 ~~~
-
 - **getcap** -> Lista capabilities
 - **setcap** -> Asigna capabilities
 
