@@ -1,3 +1,9 @@
+---
+layout: post
+title: 'Uso y manejo con Tmux && VIM'
+date: 2023-02-14
+categories: [Tmux, pers.Tmux, vim]
+---
 ### Uso y manejo con Tmux
 - Guía de atajos y comandos de Tmux: [https://hack4u.io/wp-content/uploads/2022/05/Tmux-Cheat-Sheet.pdf]([https://hack4u.io/wp-content/uploads/2022/05/Tmux-Cheat-Sheet.pdf](https://hack4u.io/wp-content/uploads/2022/05/Tmux-Cheat-Sheet.pdf))
 
