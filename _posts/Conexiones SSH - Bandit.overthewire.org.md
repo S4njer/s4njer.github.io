@@ -97,7 +97,7 @@ find . -type f | grep "\-file" | xargs file
 ~~~
 
 Aquí podemos apreciar que solamente un file es de tipo **ASCII text**, por lo que la contraseña seguramente esté ahí.
-![[formatoarchivos.png]]
+![formatoarchivos](formatoarchivos.png)
 
 ## Búsquedas precisas de archivos
 - ¿Cómo buscar y encontrar archivos en Linux?: [https://www.ionos.es/digitalguide/servidores/configuracion/comando-linux-find/](https://www.ionos.es/digitalguide/servidores/configuracion/comando-linux-find/)
@@ -106,7 +106,7 @@ Buscará desde tu directorio actual en todos las carpetas ocultas archivos y no 
 ~~~ bash
 find . -type f ! -executable -size 1033c | xargs file
 ~~~
-![[busquedaprecisa.png]]
+![busquedaprecisa](busquedaprecisa.png)
 
 Para buscar por usuarios (bandit7) y grupos (bandit6) con un tamaño de 33 bytes podríamos usar lo siguiente:
 ~~~ bash
@@ -261,7 +261,7 @@ while [ $decompressed_file_name ]; do
 done
 
 ~~~
-![[data9bin.png]]
+![bin](data9bin.png)
 
 ## Manejo de pares de claves y conexiones SSH (b13->14)
 Como funcina internet en 5 minutos: [https://www.youtube.com/watch?v=7_LPdttKXPc](https://www.youtube.com/watch?v=7_LPdttKXPc)
@@ -385,9 +385,9 @@ Nos aparecerá esto:
 - *<* -> Nos dirá que se ha quitado
 - *>* -> Nos dirá que se ha cambiado por este
 
-![[diff.png]]
+![diff](diff.png)
 > En este caso la flag que se ha quitado es la correcta
-{: . prompt-info} 
+{: .prompt-info} 
 
 Si introducimos la Flag nos dirá que no tenemos acceso, porque si nos vamos a bandit18-19 en OverTheWire.org, nos dirá que se ha modificado la *.bashrc*.
 
@@ -445,7 +445,7 @@ Nos aparecerá que tenemos conexión en nuestro localhost a través del puerto 6
 > Connection received on 127.0.0.1 60114
 
 Si intentamos otro comando nos aparecerá como Failed, pero como sabemos que tenemos que introducir la contraseña de nuestro usuario actual, símplemente la introducimos con la conexión establecida y nos aparecerá la nueva.
-![[jugando-conconexiones.png]]
+![conexioes.png](jugando-conconexiones.png)
 
 ## Abusando de tareas Cron (1/3) (b21-22)
 Cron es un administrador de tareas de Linux que permite ejecutar comandos en un momento determinado, por ejemplo, cada minuto, día, semana o mes. Si queremos trabajar con cron, podemos hacerlo a través del comando *crontab*.
@@ -475,7 +475,7 @@ En el directorio /etc/cron.d nos aparecerá las diferentes actividades para cron
 `***** bandit 22 /usr/bin/cronjob_bandit22.sh &>/dev/null`
 Por lo que nos dice que siempre está ejecutandose el archivo */usr/bin/cronjob_bandit22.sh*, por lo que si vemos que es:
 
-![[cronjobbandit22.png]]
+![cron2](cronjobbandit22.png)
 Osea, que cambia los permisos del fichero dentro de /tmp/ a 644 (rw-r--r--) y muestra la contraseña para bandit22 en este mismo archivo, por lo que si hacemos un cat a este nos aparecerá la flag para bandit22.
 
 ### Abusando de tareas cron (2/3) (b22-23)
@@ -483,7 +483,7 @@ Osea, que cambia los permisos del fichero dentro de /tmp/ a 644 (rw-r--r--) y mu
 - Cron & Crontab, explicados: [https://blog.desdelinux.net/cron-crontab-explicados/](https://blog.desdelinux.net/cron-crontab-explicados)
 Al seguir casi los mismos pasos, (mirando el archivo */etc/cron.d/cronjob_bandit23*), nos dirá que el archivo que se ejecuta está en /usr/bin/cronjob_bandit23.sh, por lo que si miramos este script nos aparecerá lo siguiente:
 
-![[cronjobbandit23.png]]
+![cron3](cronjobbandit23.png)
 
 En mytarget está diciendo que somos el usuario bandit23 (ya que es para el cronjob de este mismo), le está haciendo un hash md5sum, cortando el delimitador ' ' (un espacio) y cogiendo el primer field (campo), apareciendo lo siguiente `8ca319486bfbbc3663ea0fbe81326349`, por lo que en */tmp/8ca319486bfbbc3663ea0fbe81326349* se está guardando la contraseña de bandit23.
 
@@ -493,7 +493,7 @@ Con esta clase concluimos las tareas Cron.
 Esta parte deciros que es fundamental, sobre todo de cara a los módulos de Hacking que vamos a estar tocando en la academia, pues en muchas de las ocasiones veremos cómo nos será necesario no sólo identificar qué tareas se ejecutan en el sistema a intervalos regulares de tiempo, sino también saber cómo poder abusar de estas para elevar nuestros privilegios.
 
 Volvemos a ver los cronjobs que nos lleven a lo siguiente en bandit 24:
-![[cronjobbandit24.png]]
+![cron4])cronjobbandit24.png)
 Nos dice que cambia de directorio a */var/spool/bandit24/foo*, por lo que nos dirigiremos a /var/spool/bandit24 y listaremos, encontrando que la carpeta *foo* tiene los siguientes permisos:
 `drwxrwx-wx 3 root bandit24 4096 Feb 12 22:51 foo`
 Osea, que podremos escribir y acceder pero no leer (ya que somos *otros*), por lo que podremos crear cosas.
@@ -530,8 +530,8 @@ watch -n 1 ls -l
 Y podremos ver cómo al ejecutarse dentro del cronjob se incluirá un archivo que es el que hemos definido anteriormente como bandit24_password.log:
 
 Si nos aparece como 0 bytes significa que no está bien diseñado el script, prueba con algunos cambios para que aparezca como la imagen de abajo, osea con 33bytes.
-![[bandit24password_log.png]]
-![[bandit24passwgood.png]]
+![bandit5](bandit24password_log.png)
+![bandit6](bandit24passwgood.png)
 
 ## Comprendiendo las expresiones de las tareas Cron
 Por aquí comparto un enlace para que lo tengáis a mano y podáis practicar más por vuestra cuenta:
