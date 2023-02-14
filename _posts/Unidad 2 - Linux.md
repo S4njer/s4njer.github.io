@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Linux
-date: 202-02-14 08:24:95 +/-TTTT
+date: 2023-02-14 08:24:95
 categories: [Bash, Linux, Cheat sheet]
 tags: [TAG]     # TAG names should always be lowercase
 ---
