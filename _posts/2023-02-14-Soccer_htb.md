@@ -1,6 +1,5 @@
 ---
-layout: post
-title: 'soccer.htb - Walkthrough'
+title: 'Soccer HTB - Walkthrough'
 date: 2023-02-14
 categories: [CFT, HTB]
 img_path: /assets/images/
