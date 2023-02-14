@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'Lectura e interpretación de permisos'
+title: 'Permisos'
 date: 2023-02-14
 categories: [Lectura-Permisos, Linux]
 img_path: /assets/images/

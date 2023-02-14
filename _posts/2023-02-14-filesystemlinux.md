@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'Estructura del FileSystem (Linux)'
+title: 'Linux FileSystem /'
 date: 2023-02-14
 categories: filesystem
 img_path: /assets/images/

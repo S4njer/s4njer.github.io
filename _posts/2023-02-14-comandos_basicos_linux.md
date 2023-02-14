@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'Comandos básicos Linux'
+title: 'Linux y sus comandos'
 date: 2023-02-14
 categories: linux
 ---
