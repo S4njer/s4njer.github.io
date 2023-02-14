@@ -3,7 +3,7 @@ layout: post
 title: 'Estructura del FileSystem (Linux)'
 date: 2023-02-14
 categories: filesystem
-img_path: /_posts/images/
+img_path: /main/_posts/images/
 ---
 # Estructura de directorios del sistema (FileSystem de Linux)
 A modo de sumario, dejo la descripción de cada ruta del sistema:

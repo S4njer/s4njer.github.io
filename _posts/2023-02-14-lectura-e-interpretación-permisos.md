@@ -3,7 +3,7 @@ layout: post
 title: 'Lectura e interpretación de permisos'
 date: 2023-02-14
 categories: [Lectura-Permisos, Linux]
-img_path: /_posts/images/
+img_path: /main/_posts/images/
 ---
 
 
