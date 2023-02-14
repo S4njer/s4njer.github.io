@@ -45,7 +45,7 @@ ls -l !$
 **&&** (AND) = Se ejecuta si el primer comando es exitoso.
 **||** (OR) = Ejecutará todos los correctos
 
-{: .prompt.info Hola que tal }
+{: .prompt.info } HOLA
 
 >command var-name | *xargs* ls -l : xargs permitirá concatenar un comando a parte del original, permitiéndonos hacer un listado -l.
 
