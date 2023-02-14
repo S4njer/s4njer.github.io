@@ -3,7 +3,10 @@ layout: post
 title: 'Lectura e interpretación de permisos'
 date: 2023-02-14
 categories: [Lectura-Permisos, Linux]
+img_path: /_posts/images/
 ---
+
+
 # Lectura e interpretación de permisos
 - Permisos y Derechos en Linux: https://blog.desdelinux.net/permisos-y-derechos-en-linux/?msclkid=22f8cb88ba8111ecb5d8a3db91f066ab
 - Permisos Básicos en Linux: https://www.profesionalreview.com/2017/01/28/permisos-basicos-linux-ubuntu-chmod/
@@ -158,8 +161,8 @@ Para calcular los octales debemos saber que los permisos son potencias de dos.
 	 7   5   3
 ~~~
 
-![valor_octal](/images/Valor-octal.png)
-![valor](/_posts/images/Valor-video-s4vitar.png)
+![valor_octal](Valor-octal.png) 
+![valor](Valor-video-s4vitar.png)
 ***
 ## Permisos especiales Sticky Bit
 Enlaces:
@@ -179,7 +182,7 @@ Esto puede ser un poco peligroso porque un usuario puede borrar los ficheros de 
 
 >  Un directorio al que se le suele activar el sticky bit es /tmp
 
-![sb-ejemplo](/_posts/images/Sticky-Bit-Ejemplo.png)
+![sb-ejemplo](Sticky-Bit-Ejemplo.png)
 **¿Cómo podemos agregarlo a cualquier carpeta?**
 ~~~
 **Octal:**              | **Asignación manual:**
@@ -240,7 +243,7 @@ Enlace:
 
 La forma en la que nosotros agregaremos un SUID y el GUID será a través del comando el cual nos permite asignar-deasignar permisos, el comando **CHOWN** y en los ejemplos siguientes lo estaré agregando en notación octal.
 
-![SUID](/_posts/images/SUID-GUID_which-python.png)
+![SUID](SUID-GUID_which-python.png)
 ~~~ bash
 chmod 4775 /usr/bin/python3.10
 which python3.10 | xargs ls -l
@@ -304,7 +307,7 @@ uid=1001(juan) gid=1002(juan) groups=1002(juan), 1001(lammer)
 > **Juan no podrá borrar el archivo. El usuario Juan forma parte del grupo 'lammer' y atendiendo a los permisos, los miembros de este grupo pueden alterar el contenido de este archivo, pero no borrarlo. En este caso sólo el propietario podría borrar el archivo, el usuario Juan no tiene privilegios para esto.**
 
 Representa los siguientes permisos en octal
-![octal](/_posts/images/Representacionlinux-octa.png)
+![octal](Representacionlinux-octa.png)
 
 ¿Podré borrar el siguiente archivo con los siguientes permisos configurados?
 ~~~ bash
@@ -344,7 +347,7 @@ ls -l
 >4+1 para el propietario, 4 para los grupos y 4+2 para otros.
 
 Representa los siguientes permisos de octal al sistema de representación de permisos en Linux.
-![octal2](/_posts/images/Octal-Representacionlinux.png)
+![octal2](Octal-Representacionlinux.png)
 
 ¿Qué pasará cuando ejecute el sigiente comando?
 ~~~ bash
