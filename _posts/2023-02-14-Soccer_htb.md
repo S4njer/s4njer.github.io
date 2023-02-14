@@ -3,9 +3,9 @@ title: 'Soccer HTB - Walkthrough'
 date: 2023-02-14
 categories: [CFT, HTB]
 img_path: /assets/images/
-------
+---
 
-![soccer](/assets/images/1_8XZxVTFecE4QOhMMFA5VHg.png)
+![soccer](1_8XZxVTFecE4QOhMMFA5VHg.png)
 
 Lo primero que debemos realizar es introducir nuestro host e IP en el archivo de configuración */etc/hosts*
 ~~~ bash
@@ -144,9 +144,9 @@ Con el puerto 80 ya sabemos que hay una página web alojada en nuestra víctima,
 ~~~ bash
 gobuster dir -u soccer.htb -w /usr/share/wordlists/Seclists/Discovery/DNS/bitquark-subdomains-top100000.txt -t 1600
 ~~~
-![gobuster](/assets/images/gbster.png)
+![gobuster](gbster.png)
 Nos aparece que hay un directorio llamado */tiny*, por lo que nos dirigimos a este en nuestro navegador y comprobamos que es una página de login.
-![login](/assets/images/login.png)
+![login](login.png)
 Si miramos las tecnologías existentes con la extensión*Wappalyzer* nos aprecerá *TinyFileManager*, por lo que si investigamos, encontraremos un CVE  
 - Enlace [tinyfilemanagerexploit](https://github.com/febinrev/CVE-2021-45010-TinyFileManager-Exploit)
 
@@ -316,7 +316,7 @@ nc -nlvp 4848
 ~~~
 
 Subimos el archivo y posteriormente abrimos y clicamos sobre *open*
-![reverseshell](/assets/images/openreverseshell.php.png)
+![reverseshell](openreverseshell.php.png)
 
 Luego de esto tendremos una reverse shell con el usuario *www-data*.
 
@@ -330,15 +330,15 @@ Y nos aparece que en el directorio */etc/nginx/sites-enabled* se encuentran 2 ar
 `lrwxrwxrwx 1 root root 41 Nov 17 08:39 soc-player.htb`
 
 Veremos el contenido del archivo *soc-player.htb* y nos aparece que hay un subdominio para soccer.htb llamado *soc-player.soccer.htb*, por lo que lo volvemos a introducir en el archivo */etc/hosts/*  en la misma línea que soccer.htb
-![soccpl](/assets/images/socplayer.png)
+![soccpl](socplayer.png)
 
 Al haberlo configurado todo, vemos que al introducir *soc-player.soccer.htb* nos aparecerá una nueva página.
-![soccplht](/assets/images/socplayersoccerhtb.png)
+![soccplht](socplayersoccerhtb.png)
 
 Probemos la inyección de sql en el formulario de inicio de sesión. Pero primero, nuestra entrada es verificada por expresiones regulares en la interfaz, sin embargo, aún podemos ingresar la consulta sql usando *Burp Suite*.
 
 Nos dirigiremos a la pestaña de Registro *Signup*, y nos creamos una cuenta (ya que no tenemos ninguna credencial de acceso), posteriormente en la pestaña de check se creará una websocket 
-![socket](/assets/images/websocket.png)
+![socket](websocket.png)
 El código anterior abre la conexión websocket. espera a que ingresemos el número de boleto y presione la tecla enter. Luego, envía datos json de nuestra entrada al servidor websocket. Si recibimos un mensaje, se mostrará en la pantalla, espera.
 
 Recomiendo mirar este vídeo para enterarnos mejor:
@@ -350,7 +350,7 @@ He comprobado si podía inyectar una consulta sql (*sql query*) y funcionó, aho
 > El identificador lo podremos ver si ingresamos algun texto o letra, más que nada para saber dónde introducir una consulta sql.
 {: .prompt-tip }
 
-![ticket](/assets/images/ticketexist.png)
+![ticket](ticketexist.png)
 
 Ahora usaremos Sqlmap
 - Automatizando SQL injection a ciegas sobre WebSocket: [https://rayhan0x01.github.io/ctf/2021/04/02/blind-sqli-over-websocket-automation.html](https://rayhan0x01.github.io/ctf/2021/04/02/blind-sqli-over-websocket-automation.html)
@@ -422,7 +422,7 @@ pass
 
 - **Terminal1 ->** python3 sqli.py
 - **Terminal2 ->** sqlmap -u 'http://localhost:8081/?id=1' -p "id" -batch
-- ![sqlmap](/assets/images/sqlmap.png)
+- ![sqlmap](sqlmap.png)
 
 Nos aparecerá un usuario y contraseñas al usar `sqlmap -u "http://localhost:8081/?id=1" --batch --dbs`, por lo que nos conectamos mediante ssh:
 ~~~ bash
