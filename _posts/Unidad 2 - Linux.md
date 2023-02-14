@@ -1,8 +1,11 @@
 ---
-title: Introducción a Linux
-categories: [Linux, Bash]
+layout: post
+title: Linux
+date: 202-02-14 08:24:95 +/-TTTT
+categories: [Bash, Linux, Cheat sheet]
 tags: [TAG]     # TAG names should always be lowercase
 ---
+
 
 # Unidad 2 - Temario
 ***
