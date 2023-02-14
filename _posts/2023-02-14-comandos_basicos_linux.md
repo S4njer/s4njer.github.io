@@ -46,7 +46,7 @@ ls -l !$
 **||** (OR) = Ejecutará todos los correctos
 
 ~~~ bash
-command var-name | *xargs* ls -l
+command var-name | xargs ls -l
 ~~~ 
 > xargs permitirá concatenar un comando a parte del original, permitiéndonos hacer un listado -l.
 {: .prompt-tip}
@@ -74,6 +74,7 @@ Bash Redirections Cheat Sheet: https://hack4u.io/wp-content/uploads/2022/05/bash
 *(Es más por cultura general, no es obligatorio)*
 
 > Generalmente, un descriptor de archivo es una clave a una estructura de datos residente en el núcleo, que contiene detalles de todos los archivos abiertos.
+{: .prompt-info }
 
 **file** = Este comando nos permitirá ver qué tipo de airchivo es, lo que ocupa de tamaño y si está vacio o lleno. (En el comando de abajo no se refiere a este comando sino a un archivo)
 ~~~	
@@ -93,16 +94,16 @@ Bash Redirections Cheat Sheet: https://hack4u.io/wp-content/uploads/2022/05/bash
 ## Cuestionario de control de flujo y operadores. (75% Aprobado)
 
 ¿Qué estaré almacenando en el archivo 'file' con este comando?
-~~~
+~~~ bash
 whoam 2> file
 ~~~
-- **El stderr**
+- **stderr**
 > El valor 2 redirige los errores standard (stderr) a un archivo.
 - **Commando not found: whoam**
 > Este probablemente sería el mensaje de error que almacenaríamos en este archivo, siempre y cuando el comando 'whoam' no exista.
 
 ¿Cómo puedo cerrar el descriptor de archivo una vez hemos depositado el contenido deseado?
-~~~
+~~~ bash
 - exec 3<> file
 - whoami >&3
 - cat file
