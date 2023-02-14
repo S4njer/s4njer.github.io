@@ -330,7 +330,7 @@ Y nos aparece que en el directorio */etc/nginx/sites-enabled* se encuentran 2 ar
 `lrwxrwxrwx 1 root root 41 Nov 17 08:39 soc-player.htb`
 
 Veremos el contenido del archivo *soc-player.htb* y nos aparece que hay un subdominio para soccer.htb llamado *soc-player.soccer.htb*, por lo que lo volvemos a introducir en el archivo */etc/hosts/*  en la misma línea que soccer.htb
-![soccpl](socplayer.png)
+![soccpl](/assets/images/socplayer.png)
 
 Al haberlo configurado todo, vemos que al introducir *soc-player.soccer.htb* nos aparecerá una nueva página.
 ![soccplht](socplayersoccerhtb.png)
