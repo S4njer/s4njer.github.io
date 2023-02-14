@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'SSH - bandit.overthewire.org'
+title: 'SSH - bandit.overthewire'
 date: 2023-02-14
 categories: [bandit, overthewire, ssh, búsqueda de archivos]
 img_path: /assets/images/
