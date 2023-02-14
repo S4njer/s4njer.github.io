@@ -6,7 +6,7 @@ categories: [bandit, overthewire, ssh, búsqueda de archivos]
 img_path: /assets/images/
 ---
 
-![Overthewire](overthewire.org)
+![Overthewire](overthewire.png)
 
 # Conexiones SSH - Bandit.overthewire.org
 SSH es el nombre de protocolo y del programa que lo implementa cuya principal función es el acceso remoto a un servidor poor medio de un canal seguro en el que toda la información está cifrada.
