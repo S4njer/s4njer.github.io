@@ -1,4 +1,10 @@
-### Comandos básicos Linux
+---
+layout: post
+title: 'Comandos básicos Linux'
+date: 2023-02-14
+categories: linux
+---
+# Comandos básicos Linux
 
 **whoami** = Permite ver el usuario que eres
 
@@ -27,13 +33,13 @@ ls -l !$
 **cd** = Change Directory (Cambiar de directorio)
 ***
 
-#### Rutas absolutas de archivos principales
+## Rutas absolutas de archivos principales
 /etc/group = Todos los grupos existentes en el equipo
 /etc/passwd = Muestra el identificador de usuario, grupo al que pertenece.
 /etc/shells = Muestra las shells existentes
 /dev/null = Recurso existente es un archivo especial, cualquier cosa que metamos aquí desaparecerá.
 ***
-#### Separadores y concatenadores
+## Separadores y concatenadores
 **;** = Separa comandos y ejecuta los comandos aunque uno dé algún tipo de fallo.
 **&&** (AND) = Se ejecuta si el primer comando es exitoso.
 **||** (OR) = Ejecutará todos los correctos
@@ -41,7 +47,7 @@ ls -l !$
 >command var-name | *xargs* ls -l : xargs permitirá concatenar un comando a parte del original, permitiéndonos hacer un listado -l.
 
 ***
-#### Control del flujo stderr-stdout, operadores y procesos en segundo plano.
+## Control del flujo stderr-stdout, operadores y procesos en segundo plano.
 Bash Redirections Cheat Sheet: https://hack4u.io/wp-content/uploads/2022/05/bash-redirections-cheat-sheet.pdf
 
 - **stdin ->** Buscará el comando scp pero no quieres que te devuelva el introducido:
@@ -79,7 +85,7 @@ Bash Redirections Cheat Sheet: https://hack4u.io/wp-content/uploads/2022/05/bash
 - **exec 8>&5** = Crea una copia del archivo 5 con el identificador 8, por lo que lo tendrás guardado todo en dos archivos.
 
 *** 
-#### Cuestionario de control de flujo y operadores. (75% Aprobado)
+## Cuestionario de control de flujo y operadores. (75% Aprobado)
 
 ¿Qué estaré almacenando en el archivo 'file' con este comando?
 ~~~
