@@ -46,8 +46,8 @@ ls -l !$
 **||** (OR) = Ejecutará todos los correctos
 
 ~~~ bash
- command var-name | *xargs* ls -l
- ~~~ 
+command var-name | *xargs* ls -l
+~~~ 
 > xargs permitirá concatenar un comando a parte del original, permitiéndonos hacer un listado -l.
 {: .prompt-tip}
 
