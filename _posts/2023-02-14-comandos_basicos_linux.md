@@ -65,7 +65,7 @@ Bash Redirections Cheat Sheet: https://hack4u.io/wp-content/uploads/2022/05/bash
 2. **wireshark &>/dev/null &** = El proceso se ejecutará en 2º Plano pero al cerrar la terminal también lo hará el programa.
 3. **wireshark &>/dev/null & disown** = Desasociará el programa de la terminal, por lo que al cerrar la terminal el programa estará corriendo.
 ***
-#### Descriptores de archivo.
+## Descriptores de archivo.
 *(Es más por cultura general, no es obligatorio)*
 
 > Generalmente, un descriptor de archivo es una clave a una estructura de datos residente en el núcleo, que contiene detalles de todos los archivos abiertos.

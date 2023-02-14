@@ -4,7 +4,7 @@ title: 'Lectura e interpretación de permisos'
 date: 2023-02-14
 categories: [Lectura-Permisos, Linux]
 ---
-### Lectura e interpretación de permisos
+# Lectura e interpretación de permisos
 - Permisos y Derechos en Linux: https://blog.desdelinux.net/permisos-y-derechos-en-linux/?msclkid=22f8cb88ba8111ecb5d8a3db91f066ab
 - Permisos Básicos en Linux: https://www.profesionalreview.com/2017/01/28/permisos-basicos-linux-ubuntu-chmod/
 
@@ -46,7 +46,7 @@ drwxr-xr-x s4njer s4njer 4.0 KB Sat Jan  7 17:48:04 2023  ..
 Tipo       Usuario   Grupo   Otros  Nombre del archivo
   .               rw-        r--        r--          file.txt
 ***
-#### Asignación de permisos
+# Asignación de permisos
 Enlaces:
 
 - Asignación de permisos: [https://www.ionos.es/digitalguide/servidores/know-how/asignacion-de-permisos-de-acceso-con-chmod/](https://www.ionos.es/digitalguide/servidores/know-how/asignacion-de-permisos-de-acceso-con-chmod/)
@@ -141,7 +141,7 @@ cat /etc/group | grep new_grupo
 ~~~
 
 ***
-#### Notación Octal de permisos
+## Notación Octal de permisos
 Enlaces:
 
 - Permisos del sistema de archios GNU/Linux:[https://blog.alcancelibre.org/staticpages/index.php/permisos-sistema-de-archivos](https://blog.alcancelibre.org/staticpages/index.php/permisos-sistema-de-archivos)
@@ -158,10 +158,10 @@ Para calcular los octales debemos saber que los permisos son potencias de dos.
 	 7   5   3
 ~~~
 
-![[Valor-octal.png]]
-![[Valor-video-s4vitar.png]]
+![[images/Valor-octal.png]]
+![[images/Valor-video-s4vitar.png]]
 ***
-#### Permisos especiales Sticky Bit
+## Permisos especiales Sticky Bit
 Enlaces:
 
 - Sticky Bit - Otro Permiso especial: [https://blog.carreralinux.com.ar/2016/10/sticky-bit-permiso-especial/](https://blog.carreralinux.com.ar/2016/10/sticky-bit-permiso-especial/)
@@ -179,7 +179,7 @@ Esto puede ser un poco peligroso porque un usuario puede borrar los ficheros de 
 
 >  Un directorio al que se le suele activar el sticky bit es /tmp
 
-![[Sticky-Bit-Ejemplo.png]]
+![[images/Sticky-Bit-Ejemplo.png]]
 **¿Cómo podemos agregarlo a cualquier carpeta?**
 ~~~
 **Octal:**              | **Asignación manual:**
@@ -188,7 +188,7 @@ chmod 1xxx directorio/  | chmod o+t directorio/
 ~~~
 
 ***
-#### Control de atributos de ficheros en Linux - Chattr y Lsattr
+## Control de atributos de ficheros en Linux - Chattr y Lsattr
 Enlace:
 
 - Control de atributos de ficheros Linux: [Chattr y Lsattr](https://rm-rf.es/chattr-y-lsattr-visualizar-y-modificar-atributos-en-sistemas-de-ficheros-linux/#:~:text=El%20primer%20comando%2C%20lsattr%20permite,chmod%2C%20chown%2Csetfacl%E2%80%A6)
@@ -218,7 +218,7 @@ Enlace:
   Escribir de forma síncrona a disco cambios en los ficheros: --------- S
 
 ***
-#### Permisos especiales - SUID y SGID
+## Permisos especiales - SUID y SGID
 
 - Permisos SGID, SUID y Sticky Bit:[https://deephacking.tech/permisos-sgid-suid-y-sticky-bit-linux/#:~:text=Permiso%20SGID,-El%20permiso%20SGID&text=Si%20se%20establece%20en%20un,perteneciente%2C%20el%20grupo%20del%20directorio.](https://deephacking.tech/permisos-sgid-suid-y-sticky-bit-linux/#:~:text=Permiso%20SGID,-El%20permiso%20SGID&text=Si%20se%20establece%20en%20un,perteneciente%2C%20el%20grupo%20del%20directorio.)
 - Permisos especiales en Linux:[https://www.ochobitshacenunbyte.com/2019/06/17/permisos-especiales-en-linux-sticky-bit-suid-y-sgid/](https://www.ochobitshacenunbyte.com/2019/06/17/permisos-especiales-en-linux-sticky-bit-suid-y-sgid/)
@@ -240,7 +240,7 @@ Enlace:
 
 La forma en la que nosotros agregaremos un SUID y el GUID será a través del comando el cual nos permite asignar-deasignar permisos, el comando **CHOWN** y en los ejemplos siguientes lo estaré agregando en notación octal.
 
-![[SUID-GUID_which-python.png]]
+![[images/SUID-GUID_which-python.png]]
 ~~~ bash
 chmod 4775 /usr/bin/python3.10
 which python3.10 | xargs ls -l
@@ -260,6 +260,36 @@ find / -type f -perm -2000
 
 *** 
 
+
+# Privilegios Especiales - Capabilities
+- Linux Kernel Capabilities (No solo de sudo vive root): [https://www.incibe-cert.es/blog/linux-capabilities](https://www.incibe-cert.es/blog/linux-capabilities)
+- ¿Qué son las Linux Capabilities?: [https://www.etl.it.uc3m.es/Linux_Capabilities](https://www.etl.it.uc3m.es/Linux_Capabilities)
+Las capabilities son privilegios que se le asigna a un binario.
+Por ejemplo, hay comandos en python el cual nos permite asignar nuestra *UID* a 0, osea te convertirá en *root*:
+~~~ python
+# Esto en el caso del ejecutable de python3
+~~~ python
+import os
+os.setuid(0)
+os.system("whoami")
+
+'root 0'
+~~~
+- **getcap** -> Lista capabilities
+- **setcap** -> Asigna capabilities
+
+~~~ bash
+getcap -r / 2>/dev/null 
+~~~
+ >Esto nos permitirá listar todas las capabilities de nuestro sistema de forma recursiva desde la raíz y enviando los errores (de ahí el número 2) a /dev/null (Descriptor de archivo).
+
+~~~ bash
+setcap cap_setuid+ep /usr/bin/python3.9
+~~~
+> Esto nos permitirá asignar al binario *python3.9* la opción de cambiar el UID, por lo que podrá cambiar de usuarios cuando quiera. 
+
+---
+
 #### Cuestionario de permisos (82%)
 Atendiendo a los permisos representados y siendo el usuario Juan, ¿podré borrar el archivo?
 ~~~ bash
@@ -274,7 +304,7 @@ uid=1001(juan) gid=1002(juan) groups=1002(juan), 1001(lammer)
 > **Juan no podrá borrar el archivo. El usuario Juan forma parte del grupo 'lammer' y atendiendo a los permisos, los miembros de este grupo pueden alterar el contenido de este archivo, pero no borrarlo. En este caso sólo el propietario podría borrar el archivo, el usuario Juan no tiene privilegios para esto.**
 
 Representa los siguientes permisos en octal
-![[Representacionlinux-octa.png]]
+![[images/Representacionlinux-octa.png]]
 
 ¿Podré borrar el siguiente archivo con los siguientes permisos configurados?
 ~~~ bash
@@ -314,7 +344,7 @@ ls -l
 >4+1 para el propietario, 4 para los grupos y 4+2 para otros.
 
 Representa los siguientes permisos de octal al sistema de representación de permisos en Linux.
-![[Octal-Representacionlinux.png]]
+![[images/Octal-Representacionlinux.png]]
 
 ¿Qué pasará cuando ejecute el sigiente comando?
 ~~~ bash
@@ -368,32 +398,3 @@ drwxr-xr-x 1001 1002 4.0 KB Tue Jun 21 15:52:41 2022 Ejercicios
 ~~~
 - **El directorio en cuestión tenía un propietario y grupo asignado los cuales han sido eliminados a nivel de sistema.**
 > En su momento al directorio se le asignó un propietario y un grupo, pero posteriormente con los comandos 'userdel' y 'groupdel' se borraron tanto el propietario como el grupo existente a nivel de sistema.
-
-#### Privilegios Especiales - Capabilities
-- Linux Kernel Capabilities (No solo de sudo vive root): [https://www.incibe-cert.es/blog/linux-capabilities](https://www.incibe-cert.es/blog/linux-capabilities)
-- ¿Qué son las Linux Capabilities?: [https://www.etl.it.uc3m.es/Linux_Capabilities](https://www.etl.it.uc3m.es/Linux_Capabilities)
-Las capabilities son privilegios que se le asigna a un binario.
-Por ejemplo, hay comandos en python el cual nos permite asignar nuestra *UID* a 0, osea te convertirá en *root*:
-~~~ python
-# Esto en el caso del ejecutable de python3
-~~~ python
-import os
-os.setuid(0)
-os.system("whoami")
-
-'root 0'
-~~~
-- **getcap** -> Lista capabilities
-- **setcap** -> Asigna capabilities
-
-~~~ bash
-getcap -r / 2>/dev/null 
-~~~
- >Esto nos permitirá listar todas las capabilities de nuestro sistema de forma recursiva desde la raíz y enviando los errores (de ahí el número 2) a /dev/null (Descriptor de archivo).
-
-~~~ bash
-setcap cap_setuid+ep /usr/bin/python3.9
-~~~
-> Esto nos permitirá asignar al binario *python3.9* la opción de cambiar el UID, por lo que podrá cambiar de usuarios cuando quiera. 
-
----

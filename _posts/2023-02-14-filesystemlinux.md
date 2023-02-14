@@ -4,9 +4,9 @@ title: 'Estructura del FileSystem (Linux)'
 date: 2023-02-14
 categories: filesystem
 ---
-### Estructura de directorios del sistema (FileSystem de Linux)
+# Estructura de directorios del sistema (FileSystem de Linux)
 A modo de sumario, dejo la descripción de cada ruta del sistema:
-![[linuxfilesystem.png.png]]
+![[images/linuxfilesystem.png.png]]
 **/ ->**  Es el directorio principal a partir del cual se ramifican todo el resto de directorios.
 
 **/bin ->** Es un directorio estático y compartible en el que se almacenan archivos binarios/ejecutables y necesarios para el funcionamiento del sistema *(Casi todos los usuarios pueden usarlos)*, mientras que el directorio */sbin* sería exclusivamente lo mismo pero para el usuario root.
@@ -50,7 +50,7 @@ A modo de sumario, dejo la descripción de cada ruta del sistema:
 **/lost-found ->** Se crea en las particiones de disco con un sistema de archivos ext, los cuales usando herramientas podríamos recuperar nuestro sistema operativo *(por ejemplo, fsch)*. 
 - Si nuestro sistema no ha presentado problemas este directorio estará completamente vacío y, en el caso de haber problemas éste contendrá ficheros y directorios que han sido recuperados tras la caída del sistema operativo.
 
-#### Uso de bashrc y zshrc
+## Uso de bashrc y zshrc
 - ¿Qué es Bashrc en Linux? [https://www.compuhoy.com/que-es-bashrc-en-linux/](https://www.compuhoy.com/que-es-bashrc-en-linux/)
 - ¿Por qué deberías usar ZSH? [https://respontodo.com/que-es-zsh-y-por-que-deberia-usarlo-en-lugar-de-bash/](https://respontodo.com/que-es-zsh-y-por-que-deberia-usarlo-en-lugar-de-bash/)]
 
@@ -115,7 +115,7 @@ find / -name dex\*.sh 2>/dev/null
 
 ---
 
-#### Creación de Scripts en bash
+## Creación de Scripts en bash
 Por ahora no estaremos viendo al 100% bash, ya que eso lo tocaremos más adelante para crearnos una serie de herramientas que nos servirán para practicar y entender varios de los comados existentes.
 
 > El comando *seq 1 20* creará un bucle del 1 al 20
@@ -163,4 +163,4 @@ yellowColour="\e[0;33m\033[1m"
 echo -e "\n${yellowColour}[+]${endColour} ${blueColour}Esta es tu dirección IP privada -> ${endColour} ${redColour}$(ip a | grep enp2s0 | tail -n 1  | awk '{print $2}' | cut -d '/' -f 1)${endColour}\n"
 ~~~
 Y este sería el resultado:
-![[bashscript1.png]]
+![[images/bashscript1.png]]
