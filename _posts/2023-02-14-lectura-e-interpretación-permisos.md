@@ -26,7 +26,7 @@ Permiso    Identifica
 
 **>**= Redirigirá hacia algún fichero.
 **>>**= Redirigirá hacia algún fichero haciendo append.
-~~~ Ejemplo
+~~~ bash
 - echo "Hola probando" > file.txt
 - echo "Buenos días" >> file.txt
 - cat file.txt
@@ -57,7 +57,7 @@ Enlaces:
 
 - Gestión de usuarios y grupos en Linux: [https://atareao.es/como/gestion-de-usuarios-y-grupos-en-linux/](https://atareao.es/como/gestion-de-usuarios-y-grupos-en-linux/)
 
-~~~
+~~~ bash
 - ls -al
 drwxr-xr-x s4njer s4njer 4.0 KB Sun Jan  8 16:52:18 2023  .
 drwxr-xr-x s4njer s4njer 4.0 KB Sat Jan  7 17:48:04 2023  ..
@@ -70,7 +70,7 @@ Podemos ver que la carpeta *Prueba* tiene como usuario a *root*, por lo que si a
      d           rwx          r-x         r-x          Prueba
 
 Para cambiar los permisos podremos usar el comando *chmod*.
-~~~
+~~~ bash
 - chmod o+w prueba 
 - ls -al
 
@@ -82,7 +82,7 @@ drwxr-xrwx root   root   4.0 KB Sun Jan  8 17:45:38 2023  prueba
 - Este nos permitirá asignar a los usuarios *others* el permiso de *escritura* (w) en la carpeta *'prueba'*.
 Podemos cambiar los grupos a los que pertenece el archivo con *chgrp* (change group).
 
-~~~
+~~~ bash
 - chgrp s4njer prueba
 - ls -al
 
@@ -93,7 +93,7 @@ drwxr-xrwx root   s4njer 4.0 KB Sun Jan  8 17:45:38 2023  prueba
 
 La opción '*-*' quitará los permisos que hayamos asignado.
 	
-~~~
+~~~ bash
 - chmod u-x, g-rx, o+w,o-x prueba
 ~~~
 
@@ -101,13 +101,13 @@ La opción '*-*' quitará los permisos que hayamos asignado.
 	-s = Tipo de shell que va a usar
 	-d = El directorio principal
 	
-~~~
+~~~ bash
 useradd pepe -s /bin/bash -d /home/pepe
 ~~~
 
 - **chown** = Permite cambiar el propietario que pertenece el archivo, directorio, etc..
 	
-~~~
+~~~ bash
 - cd /home
 - chown pepe pepe
 - ls -l /home
@@ -123,20 +123,20 @@ drwxr-xr-x root   s4njer 4.0 KB Sun Jan  8 17:45:38 2023  s4njer
 
 Esto nos permitirá cambiar tanto el propietario *s4njer* como el grupo *root* en el directorio *pepe*, siendo mucho más rápido en cambiar tanto el propietario como al grupo que pertenece.
 	
-~~~
+~~~ bash
 chown s4njer:root pepe
 ~~~
 
 Podríamos también agregar al mismo grupo (nuevo) dos usuarios, para ello usaremos los comandos "*groupadd new_grupo*" y "*usermod -a -G
 	
-~~~
+~~~ bash
 - groupadd circulo
 - usermod -a -G circulo user
 ~~~
 
 Para ver el cambio podremos mirar con:
 	
-~~~
+~~~ bash
 cat /etc/group | grep new_grupo
 ~~~
 
