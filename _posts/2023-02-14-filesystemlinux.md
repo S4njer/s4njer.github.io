@@ -52,7 +52,7 @@ A modo de sumario, dejo la descripción de cada ruta del sistema:
 
 ## Uso de bashrc y zshrc
 - ¿Qué es Bashrc en Linux? [https://www.compuhoy.com/que-es-bashrc-en-linux/](https://www.compuhoy.com/que-es-bashrc-en-linux/)
-- ¿Por qué deberías usar ZSH? [https://respontodo.com/que-es-zsh-y-por-que-deberia-usarlo-en-lugar-de-bash/](https://respontodo.com/que-es-zsh-y-por-que-deberia-usarlo-en-lugar-de-bash/)]
+- ¿Por qué deberías usar ZSH? [https://respontodo.com/que-es-zsh-y-por-que-deberia-usarlo-en-lugar-de-bash/](https://respontodo.com/que-es-zsh-y-por-que-deberia-usarlo-en-lugar-de-bash/)
 
 ZSH, también llamado Z shell, es una versión extendida de Bourne Shell (sh), con muchas características y soporte para complementos y temas. Dado que se basa en el mismo shell que Bash, ZSH tiene muchas de las mismas características, y cambiar es muy sencillo.
 
