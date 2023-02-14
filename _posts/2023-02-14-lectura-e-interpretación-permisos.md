@@ -158,7 +158,7 @@ Para calcular los octales debemos saber que los permisos son potencias de dos.
 	 7   5   3
 ~~~
 
-![valor_octal](/_posts/images/Valor-octal.png)
+![valor_octal](/images/Valor-octal.png)
 ![valor](/_posts/images/Valor-video-s4vitar.png)
 ***
 ## Permisos especiales Sticky Bit
