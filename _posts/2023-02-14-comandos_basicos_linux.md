@@ -3,6 +3,7 @@ layout: post
 title: 'Linux y sus comandos'
 date: 2023-02-14
 categories: linux
+pin: true
 ---
 # Comandos básicos Linux
 
@@ -43,6 +44,8 @@ ls -l !$
 **;** = Separa comandos y ejecuta los comandos aunque uno dé algún tipo de fallo.
 **&&** (AND) = Se ejecuta si el primer comando es exitoso.
 **||** (OR) = Ejecutará todos los correctos
+
+{: .prompt.info Hola que tal }
 
 >command var-name | *xargs* ls -l : xargs permitirá concatenar un comando a parte del original, permitiéndonos hacer un listado -l.
 
