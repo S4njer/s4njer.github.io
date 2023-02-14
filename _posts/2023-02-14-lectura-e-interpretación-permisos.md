@@ -376,8 +376,9 @@ Las capabilities son privilegios que se le asigna a un binario.
 Por ejemplo, hay comandos en python el cual nos permite asignar nuestra *UID* a 0, osea te convertirá en *root*:
 ~~~ python
 # Esto en el caso del ejecutable de python3
+~~~ python
 import os
-os.setuid(0)
+ os.setuid(0)
 os.system("whoami")
 
 'root 0'
