@@ -3,10 +3,11 @@ layout: post
 title: 'Estructura del FileSystem (Linux)'
 date: 2023-02-14
 categories: filesystem
+img_path: /_posts/images/
 ---
 # Estructura de directorios del sistema (FileSystem de Linux)
 A modo de sumario, dejo la descripción de cada ruta del sistema:
-![linuxfilesystem](/_posts/images/linuxfilesystem.png.png)
+![linuxfilesystem](linuxfilesystem.png.png)
 **/ ->**  Es el directorio principal a partir del cual se ramifican todo el resto de directorios.
 
 **/bin ->** Es un directorio estático y compartible en el que se almacenan archivos binarios/ejecutables y necesarios para el funcionamiento del sistema *(Casi todos los usuarios pueden usarlos)*, mientras que el directorio */sbin* sería exclusivamente lo mismo pero para el usuario root.
@@ -163,4 +164,4 @@ yellowColour="\e[0;33m\033[1m"
 echo -e "\n${yellowColour}[+]${endColour} ${blueColour}Esta es tu dirección IP privada -> ${endColour} ${redColour}$(ip a | grep enp2s0 | tail -n 1  | awk '{print $2}' | cut -d '/' -f 1)${endColour}\n"
 ~~~
 Y este sería el resultado:
-![bashscript1](/_posts/images/bashscript1.png)
+![bashscript1](bashscript1.png)
