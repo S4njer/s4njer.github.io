@@ -3,9 +3,7 @@ title: Introducción a Linux
 categories: [Linux, Bash]
 tags: [TAG]     # TAG names should always be lowercase
 ---
----
-![[images/bannerT2Hack4u.jpg]]"
----
+
 # Unidad 2 - Temario
 ***
 **Enlaces para comandos Linux**
