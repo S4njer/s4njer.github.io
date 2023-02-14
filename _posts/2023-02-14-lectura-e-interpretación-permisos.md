@@ -5,8 +5,8 @@ date: 2023-02-14
 categories: [Lectura-Permisos, Linux]
 ---
 ### Lectura e interpretación de permisos
-Permisos y Derechos en Linux: https://blog.desdelinux.net/permisos-y-derechos-en-linux/?msclkid=22f8cb88ba8111ecb5d8a3db91f066ab
-Permisos Básicos en Linux: https://www.profesionalreview.com/2017/01/28/permisos-basicos-linux-ubuntu-chmod/
+- Permisos y Derechos en Linux: https://blog.desdelinux.net/permisos-y-derechos-en-linux/?msclkid=22f8cb88ba8111ecb5d8a3db91f066ab
+- Permisos Básicos en Linux: https://www.profesionalreview.com/2017/01/28/permisos-basicos-linux-ubuntu-chmod/
 
 El primer carácter de los archivos puede ser el siguiente:
 
