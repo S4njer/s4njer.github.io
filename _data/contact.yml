@@ -12,7 +12,7 @@
   noblank: true            # open link in current tab
 -
   type: hackthebox
-  icon: 'fas fa-rss'
+  icon: 'fas fa-cube'
   noblank: true
 
 # Uncomment and complete the url below to enable more contact options
