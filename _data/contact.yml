@@ -12,9 +12,9 @@
   noblank: true            # open link in current tab
 -
   type: hackthebox
-  icon: 'fas fa-cube'
+  icon: 'fas fa-regular fa-cube'
   noblank: true
-  url: 'https://app.hackthebox.com/profile/932339'
+  url: https://app.hackthebox.com/profile/932339
 
 # Uncomment and complete the url below to enable more contact options
 # -
