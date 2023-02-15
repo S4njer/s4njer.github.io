@@ -29,11 +29,10 @@ description: >-                        # used by seo meta and the atom feed
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
 url: ''
 
-#github:
-#  username: S4njer             # change to your github username
+github:
+  username: S4njer             # change to your github username
   
-hackthebox:
-    username: Sanjer900
+
 
 twitter:
   username: Sanjer900            # change to your twitter username
@@ -46,11 +45,10 @@ social:
   links:
     # The first element serves as the copyright owner's link
     - https://github.com/S4njer       # change to your github homepage
-   # - https://app.hackthebox.com/profile/932339     # change to your HTB homepage
     - https://twitter.com/Sanjer900    # change to your twitter homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
-    - https://www.linkedin.com/in/username
+    #- https://www.linkedin.com/in/username
 
 google_site_verification:               # fill in to your verification string
 
