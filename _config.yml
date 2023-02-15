@@ -23,7 +23,7 @@ title: ./S4njer's Blog                          # the main title
 
 tagline: Blog dedicado a Ciberseguridad, CTF, aplicaciones web y más...   # it will display as the sub-title
 
-description: >-                        # used by seo meta and the atom feed
+description:                        # used by seo meta and the atom feed
   A minimal, responsive, and powerful Jekyll theme for presenting professional writing.
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
@@ -32,7 +32,8 @@ url: ''
 github:
   username: S4njer             # change to your github username
   
-
+hackthebox:
+  username: Sanjer900
 
 twitter:
   username: Sanjer900            # change to your twitter username
@@ -44,11 +45,12 @@ social:
   email: s4njer900@proton.me             # change to your email address
   links:
     # The first element serves as the copyright owner's link
-    - https://github.com/S4njer       # change to your github homepage
+    - https://github.com/S4njer/
     - https://twitter.com/Sanjer900    # change to your twitter homepage
+    - https://app.hackthebox.com/profile/932339
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
-    #- https://www.linkedin.com/in/username
+    - https://www.linkedin.com/in/username
 
 google_site_verification:               # fill in to your verification string
 
