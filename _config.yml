@@ -32,7 +32,7 @@ url: ''
 github:
   username: S4njer             # change to your github username
   
-  hackthebox:
+hackthebox:
     username: Sanjer900
 
 twitter:
@@ -45,9 +45,9 @@ social:
   email: s4njer900@proton.me             # change to your email address
   links:
     # The first element serves as the copyright owner's link
-    - https://app.hackthebox.com/profile/overview
-    - https://twitter.com/Sanjer900    # change to your twitter homepage
     - https://github.com/S4njer       # change to your github homepage
+    - https://app.hackthebox.com/profile/932339     # change to your HTB homepage
+    - https://twitter.com/Sanjer900    # change to your twitter homepage
     # Uncomment below to add more social links
     # - https://www.facebook.com/username
     - https://www.linkedin.com/in/username
