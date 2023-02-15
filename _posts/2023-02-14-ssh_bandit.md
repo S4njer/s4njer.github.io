@@ -447,7 +447,7 @@ Nos aparecerá que tenemos conexión en nuestro localhost a través del puerto 6
 Si intentamos otro comando nos aparecerá como Failed, pero como sabemos que tenemos que introducir la contraseña de nuestro usuario actual, símplemente la introducimos con la conexión establecida y nos aparecerá la nueva.
 ![conexioes.png](jugando-conconexiones.png)
 
-## Abusando de tareas Cron (b21-22)
+## Abusando de tareas Cron
 Cron es un administrador de tareas de Linux que permite ejecutar comandos en un momento determinado, por ejemplo, cada minuto, día, semana o mes. Si queremos trabajar con cron, podemos hacerlo a través del comando *crontab*.
 
 El formato de configuración de cron es el siguiente: *Minuto Hora Dia-del-mes Mes Dia-de-la-semana Comando-a-ejecutar*
